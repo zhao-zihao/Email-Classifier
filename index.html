@@ -1,65 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="utf-8">
-    <base href="/">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head 
-         content must come *after* these tags -->
-    <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="41258472389-jqstmnan3c2p2r9l8apa2evsp3cu0b5g.apps.googleusercontent.com">
-   
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    
-    <title>Ristorante Con Fusion</title>    
-        <!-- Bootstrap -->
-<!-- build:css styles/main.css -->
-    
-<!-- endbuild -->
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <meta name="google-signin-client_id" content="41258472389-jqstmnan3c2p2r9l8apa2evsp3cu0b5g.apps.googleusercontent.com">
 </head>
-
 <body>
-    {{23+23}}
-    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+  <div id="my-signin2"></div>
     
-    <div ui-view></div>
-    <div ui-view="header"></div>
-    <div ui-view="content"></div>
-    <div ui-view="footer"></div>
+  <script>
+    function onSuccess(googleUser) {
+      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+    }
+    function onFailure(error) {
+      console.log(error);
+    }
+    function renderButton() {
+      gapi.signin2.render('my-signin2', {
+        'scope': 'https://mail.google.com/',
+        'width': 240,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSuccess,
+        'onfailure': onFailure
+      });
+    }
+  </script>
 
-    <p id="demo"></p>  
-    
-<!-- build:js scripts/main.js -->
-     <script>
-      function onSignIn(googleUser) {
-        // Useful data for your client-side scripts:
-        var profile = googleUser.getBasicProfile();
-          
-        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-        console.log('Full Name: ' + profile.getName());
-        console.log('Given Name: ' + profile.getGivenName());
-        console.log('Family Name: ' + profile.getFamilyName());
-        console.log("Image URL: " + profile.getImageUrl());
-        console.log("Email: " + profile.getEmail());
-          document.getElementById('demo').innerHTML = Date()
-        // The ID token you need to pass to your backend:
-        var id_token = googleUser.getAuthResponse().id_token;
-        console.log("ID Token: " + id_token);
-        
-      };
-    </script>
-   
-<!-- endbuild -->
-
+  <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 </body>
-
 </html>
