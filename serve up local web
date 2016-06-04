@@ -1,0 +1,3 @@
+Install: npm install -g http-server. 
+After installation cd into to project folder(which contains the index.html now)
+and run http-server -o. -o is to open browser to the page.
