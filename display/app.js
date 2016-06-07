@@ -114,7 +114,7 @@ app.controller("myCtrl", function($scope) {
       }
 
  function appendMessageRow2(message) {
-        //$("#mytbody").empty();
+        $("#mytbody").empty();
         $('#mytbody').append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
