@@ -114,7 +114,8 @@ app.controller("myCtrl", function($scope) {
       }
 
  function appendMessageRow2(message) {
-        $('#mymodaltable tbody').append(
+        //$("#mytbody").empty();
+        $('#mytbody').append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
@@ -125,30 +126,6 @@ app.controller("myCtrl", function($scope) {
             </td>\
             <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
           </tr>'
-        );
-
-        $('body').append(
-          '<div class="modal fade" id="message-modal-' + message.id +
-              '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
-            <div class="modal-dialog modal-lg">\
-              <div class="modal-content">\
-                <div class="modal-header">\
-                  <button type="button"\
-                          class="close"\
-                          data-dismiss="modal"\
-                          aria-label="Close">\
-                    <span aria-hidden="true">&times;</span></button>\
-                  <h4 class="modal-title" id="myModalLabel">' +
-                    getHeader(message.payload.headers, 'Subject') +
-                  '</h4>\
-                </div>\
-                <div class="modal-body">\
-                  <iframe id="message-iframe-'+message.id+'" srcdoc="<p>Loading...</p>">\
-                  </iframe>\
-                </div>\
-              </div>\
-            </div>\
-          </div>'
         );
 
         $('#message-link-'+message.id).on('click', function(){
@@ -224,7 +201,7 @@ function listMessages(userId, query, callback) {
   getPageOfMessages(initialRequest, []);
 };
     var listMessages1 = function(){
-        listMessages("me","yang",function(result){
+        listMessages("me","wix",function(result){
         for(var i=0;i<result.length;++i){
           console.log(result[i].id);
         }
@@ -236,4 +213,4 @@ function listMessages(userId, query, callback) {
             messageRequest.execute(appendMessageRow2);
           });
         })};
-        //listMessages("me","yang",function(){console.log("hehe")})
+        //listMessages("me","wix",function(){console.log("hehe")})
