@@ -113,9 +113,53 @@ app.controller("myCtrl", function($scope) {
         });
       }
 
+ function appendMessageRow2(message) {
+        $('#mymodaltable tbody').append(
+          '<tr>\
+            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+                getHeader(message.payload.headers, 'Subject') +
+              '</a>\
+            </td>\
+            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+          </tr>'
+        );
+
+        $('body').append(
+          '<div class="modal fade" id="message-modal-' + message.id +
+              '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
+            <div class="modal-dialog modal-lg">\
+              <div class="modal-content">\
+                <div class="modal-header">\
+                  <button type="button"\
+                          class="close"\
+                          data-dismiss="modal"\
+                          aria-label="Close">\
+                    <span aria-hidden="true">&times;</span></button>\
+                  <h4 class="modal-title" id="myModalLabel">' +
+                    getHeader(message.payload.headers, 'Subject') +
+                  '</h4>\
+                </div>\
+                <div class="modal-body">\
+                  <iframe id="message-iframe-'+message.id+'" srcdoc="<p>Loading...</p>">\
+                  </iframe>\
+                </div>\
+              </div>\
+            </div>\
+          </div>'
+        );
+
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $('body', ifrm).html(getBody(message.payload));
+        });
+      }
+
       function getHeader(headers, index) {
         var header = '';
-                                       
+
         $.each(headers, function(){
           if(this.name === index){
             header = this.value;
@@ -155,7 +199,7 @@ app.controller("myCtrl", function($scope) {
         }
         return '';
       }
-        
+
 function listMessages(userId, query, callback) {
   var getPageOfMessages = function(request, result) {
     request.execute(function(resp) {
@@ -182,14 +226,14 @@ function listMessages(userId, query, callback) {
     var listMessages1 = function(){
         listMessages("me","yang",function(result){
         for(var i=0;i<result.length;++i){
-          console.log(result[i].id);  
+          console.log(result[i].id);
         }
          $.each(result, function() { //对于每一个message遍历
             var messageRequest = gapi.client.gmail.users.messages.get({
               'userId': 'me',    //userId 可以用邮箱
               'id': this.id     // this 指的每一个message，它都有一个id属性
             });
-            messageRequest.execute(appendMessageRow);
+            messageRequest.execute(appendMessageRow2);
           });
         })};
         //listMessages("me","yang",function(){console.log("hehe")})
