@@ -1,12 +1,3 @@
-var app = angular.module("myApp", []);
-app.controller("myCtrl", function($scope) {
-  $scope.records = [
-    "Alfreds Futterkiste",
-    "Berglunds snabbk鰌",
-    "Centro comercial Moctezuma",
-    "Ernst Handel",
-  ]
-});
 
       var clientId = '361872865320-e60c6te60kiai7ie0ppvo165doqmuc41.apps.googleusercontent.com';
       var apiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
