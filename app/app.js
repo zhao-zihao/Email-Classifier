@@ -53,7 +53,7 @@
         });
       }
 
-      function appendMessageRow(message) {
+      function appendMessageRow(message) {  // add email in home page
         $('.table-inbox tbody').append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
@@ -67,7 +67,7 @@
           </tr>'
         );
 
-        $('body').append(
+        $('body').append(      //add modal to index.html body
           '<div class="modal fade" id="message-modal-' + message.id +
               '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
             <div class="modal-dialog modal-lg">\
@@ -90,15 +90,16 @@
             </div>\
           </div>'
         );
-
+            
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload));
+          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
         });
       }
 
- function appendMessageRow2(message) {
-        $('#mytbody').append(
+ function appendMessageRow2(message) {  
+         //add table to query_modal
+        $('#query_tbody').append(          
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
@@ -110,17 +111,41 @@
             <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
           </tr>'
         );
-
+        //add modal to #pop_up_modal
+      $('#pop_up_modal').append(
+          '<div class="modal fade" id="message-modal-' + message.id +
+              '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
+            <div class="modal-dialog modal-lg">\
+              <div class="modal-content">\
+                <div class="modal-header">\
+                  <button type="button"\
+                          class="close"\
+                          data-dismiss="modal"\
+                          aria-label="Close">\
+                    <span aria-hidden="true">&times;</span></button>\
+                  <h4 class="modal-title" id="myModalLabel">' +
+                    getHeader(message.payload.headers, 'Subject') +
+                  '</h4>\
+                </div>\
+                <div class="modal-body">\
+                  <iframe id="message-iframe-'+message.id+'" srcdoc="<p>Loading...</p>">\
+                  </iframe>\
+                </div>\
+              </div>\
+            </div>\
+          </div>'
+        );
+     
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
           $('body', ifrm).html(getBody(message.payload));
         });
       }
-
+    
       function getHeader(headers, index) {
         var header = '';
-
-        $.each(headers, function(){
+        $.each(headers, function(key,value){ // headers is an obj array, just use key,value, key=index, value=obj
+            console.log(key+" message.headers.name: "+this.name+"  Value:"+this.value);
           if(this.name === index){
             header = this.value;
           }
@@ -128,7 +153,7 @@
         return header;
       }
 
-      function getBody(message) {
+      function getBody(message) { //message = message.payload
         var encodedBody = '';
         if(typeof message.parts === 'undefined')
         {
@@ -185,7 +210,8 @@ function listMessages(userId, query, callback) {
 };
 
     function listMessages2(query_input){
-        $("#mytbody").empty();   //care!!
+        $("#query_tbody").empty();      // query modal for list header information
+        $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
         listMessages("me",query_input,function(result){
         for(var i=0;i<result.length;++i){
           console.log(result[i].id);
@@ -216,9 +242,9 @@ function listMessages(userId, query, callback) {
                 alert("Enter Some Text In Input Field");
                 }else{
                 //alert(query_input);
+                $("#query_modal").modal();
                 listMessages2(query_input);
                 };
-               console.log(query_input);
           });
         } else {
           $('#authorize-button').removeClass("hidden"); //signin page
