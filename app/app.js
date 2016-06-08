@@ -25,23 +25,7 @@
         return false;
       }
 
-      function handleAuthResult(authResult) {
-        if(authResult && !authResult.error) {
-          loadGmailApi();                               //email page
-          $('#authorize-button').addClass("hidden");
-          $('#testmodal-button').removeClass("hidden");
-          $('#signout-button').removeClass("hidden");
-          $('.table-inbox').removeClass("hidden");
-          $('#signout-button').on('click', function(){
-            handleSignOut();
-          });
-        } else {
-          $('#authorize-button').removeClass("hidden"); //signin page
-          $('#authorize-button').on('click', function(){
-            handleAuthClick();
-          });
-        }
-      }
+
     
       //load gmail api
       function loadGmailApi() {
@@ -114,7 +98,6 @@
       }
 
  function appendMessageRow2(message) {
-        $("#mytbody").empty();
         $('#mytbody').append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
@@ -200,8 +183,10 @@ function listMessages(userId, query, callback) {
   });
   getPageOfMessages(initialRequest, []);
 };
-    var listMessages1 = function(){
-        listMessages("me","wix",function(result){
+
+    function listMessages2(query_input){
+        $("#mytbody").empty();   //care!!
+        listMessages("me",query_input,function(result){
         for(var i=0;i<result.length;++i){
           console.log(result[i].id);
         }
@@ -214,3 +199,31 @@ function listMessages(userId, query, callback) {
           });
         })};
         //listMessages("me","wix",function(){console.log("hehe")})
+
+      function handleAuthResult(authResult) {
+        if(authResult && !authResult.error) {
+          loadGmailApi();                               //email page
+          $('#authorize-button').addClass("hidden");
+          $('#testmodal-button').removeClass("hidden");
+          $('#signout-button').removeClass("hidden");
+          $('.table-inbox').removeClass("hidden");
+          $('#signout-button').on('click', function(){
+            handleSignOut();
+          });
+          $('#search_button').on('click',function(){
+              var query_input = $('#query_input').val();
+              if(query_input=='') {
+                alert("Enter Some Text In Input Field");
+                }else{
+                //alert(query_input);
+                listMessages2(query_input);
+                };
+               console.log(query_input);
+          });
+        } else {
+          $('#authorize-button').removeClass("hidden"); //signin page
+          $('#authorize-button').on('click', function(){
+            handleAuthClick();
+          });
+        }
+      }
