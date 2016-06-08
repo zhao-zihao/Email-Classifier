@@ -236,6 +236,8 @@ function listMessages(userId, query, callback) {
           $('#signout-button').on('click', function(){
             handleSignOut();
           });
+          $('#nav_search').removeClass("hidden");
+          $('#welcome').addClass("hidden");
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
               if(query_input=='') {
@@ -247,6 +249,8 @@ function listMessages(userId, query, callback) {
                 };
           });
         } else {
+          $('#nav_search').addClass("hidden");
+          $('#welcome').removeClass("hidden");
           $('#authorize-button').removeClass("hidden"); //signin page
           $('#authorize-button').on('click', function(){
             handleAuthClick();
