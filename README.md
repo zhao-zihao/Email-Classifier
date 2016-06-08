@@ -1,7 +1,8 @@
 # 2016SummerEmailClassifier
 >Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao
 
-      note: use python -m SimpleHTTPServer to run local host
+      note: use “python -m SimpleHTTPServer” to run local host
+      open browser at "localhost:8000" 
 
 
 Building a custom Google Sign-In button: https://developers.google.com/identity/sign-in/web/build-button#customizing_the_automatically_rendered_sign-in_button_recommended
