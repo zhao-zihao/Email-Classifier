@@ -19,12 +19,14 @@
   </head>
   <body>
     <div class="container">
-      <h1>Email classifer</h1>
-
-      <button id="authorize-button" class="btn btn-primary hidden">Authorize</button>
-      
+      <div id="header"></div> <!--header -->
+      <div id="welcome">
+        <h1 class="bg-info">Email classifer</h1>
+      </div> 
+     
+ 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" 
+    <button id="testmodal-button" type="button" class="btn btn-primary btn-lg hidden" data-toggle="modal" data-target="#myModal" 
             onclick="listMessages1()"> 
       Launch test modal
     </button>
@@ -71,12 +73,14 @@
         <tbody></tbody>
       </table>
     </div>
-
+     
+    <div id="footer"></div> <!--footer -->
+      
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="./app.js"></script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-
+    <script src="./header_footer.js"></script>
   </body>
 </html>

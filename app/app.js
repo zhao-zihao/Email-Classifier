@@ -27,21 +27,30 @@
 
       function handleAuthResult(authResult) {
         if(authResult && !authResult.error) {
-          loadGmailApi();
-          $('#authorize-button').remove();
+          loadGmailApi();                               //email page
+          $('#authorize-button').addClass("hidden");
+          $('#testmodal-button').removeClass("hidden");
+          $('#signout-button').removeClass("hidden");
           $('.table-inbox').removeClass("hidden");
+          $('#signout-button').on('click', function(){
+            handleSignOut();
+          });
         } else {
-          $('#authorize-button').removeClass("hidden");
+          $('#authorize-button').removeClass("hidden"); //signin page
           $('#authorize-button').on('click', function(){
             handleAuthClick();
           });
         }
       }
+    
       //load gmail api
       function loadGmailApi() {
         gapi.client.load('gmail', 'v1', displayInbox);
       }
-
+      function handleSignOut(){
+        //gapi.auth.signOut();      // this method don't work on localhost
+        window.location.href = "https://accounts.google.com/logout"; //sign out google account 
+      }
       function displayInbox() {
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
