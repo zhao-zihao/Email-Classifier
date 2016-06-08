@@ -1,0 +1,23 @@
+{
+  "name": "emailclssifier",
+  "homepage": "\"\"",
+  "authors": [
+    "HoweZZH <zhaozihao7199@gmail.com>"
+  ],
+  "description": "classify emails",
+  "main": "index.html",
+  "keywords": [
+    "email",
+    "gmail",
+    "googleapi",
+    "SIT"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

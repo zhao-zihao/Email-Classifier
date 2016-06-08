@@ -1,12 +1,3 @@
-var app = angular.module("myApp", []);
-app.controller("myCtrl", function($scope) {
-  $scope.records = [
-    "Alfreds Futterkiste",
-    "Berglunds snabbk鰌",
-    "Centro comercial Moctezuma",
-    "Ernst Handel",
-  ]
-});
 
       var clientId = '361872865320-e60c6te60kiai7ie0ppvo165doqmuc41.apps.googleusercontent.com';
       var apiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
@@ -36,21 +27,30 @@ app.controller("myCtrl", function($scope) {
 
       function handleAuthResult(authResult) {
         if(authResult && !authResult.error) {
-          loadGmailApi();
-          $('#authorize-button').remove();
+          loadGmailApi();                               //email page
+          $('#authorize-button').addClass("hidden");
+          $('#testmodal-button').removeClass("hidden");
+          $('#signout-button').removeClass("hidden");
           $('.table-inbox').removeClass("hidden");
+          $('#signout-button').on('click', function(){
+            handleSignOut();
+          });
         } else {
-          $('#authorize-button').removeClass("hidden");
+          $('#authorize-button').removeClass("hidden"); //signin page
           $('#authorize-button').on('click', function(){
             handleAuthClick();
           });
         }
       }
+    
       //load gmail api
       function loadGmailApi() {
         gapi.client.load('gmail', 'v1', displayInbox);
       }
-
+      function handleSignOut(){
+        //gapi.auth.signOut();      // this method don't work on localhost
+        window.location.href = "https://accounts.google.com/logout"; //sign out google account 
+      }
       function displayInbox() {
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
@@ -114,7 +114,7 @@ app.controller("myCtrl", function($scope) {
       }
 
  function appendMessageRow2(message) {
-        //$("#mytbody").empty();
+        $("#mytbody").empty();
         $('#mytbody').append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
