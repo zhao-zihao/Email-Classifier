@@ -8,6 +8,6 @@ $(document).ready(function(){
   $('#inbox').load('views/inbox.html');
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
+        $("#wrapper").toggleClass("toggled"); // from remove to add OR from add to remove this toggled class
     });
 });
