@@ -39,7 +39,7 @@
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'INBOX',
-          'maxResults': 10
+          'maxResults': 50
         });
 
         request.execute(function(response) {
@@ -236,7 +236,9 @@ function listMessages(userId, query, callback) {
             handleSignOut();
           });
           $('#nav_search').removeClass("hidden");
-          $('#welcome').addClass("hidden");
+          $('#welcome').addClass('hidden');
+          $('#sidebar-wrapper').removeClass('hidden');
+          $('#menu-toggle').removeClass('hidden');
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
               if(query_input=='') {
@@ -248,8 +250,10 @@ function listMessages(userId, query, callback) {
                 };
           });
         } else {
+          $('#menu-toggle').addClass('hidden');
+          $('#sidebar-wrapper').addClass('hidden');
           $('#nav_search').addClass("hidden");
-          $('#welcome').removeClass("hidden");
+          $('#welcome').removeClass('hidden');
           $('#authorize-button').removeClass("hidden"); //signin page
           $('#authorize-button').on('click', function(){
             handleAuthClick();
