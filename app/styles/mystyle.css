@@ -1,0 +1,49 @@
+body { padding-top: 70px; } /* the fixed nav bar */
+
+/* Sticky footer styles
+-------------------------------------------------- */
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+iframe {
+        width: 100%;
+        border: 0;
+        min-height: 80%;
+        height: 600px;
+        display: flex;
+      }
+
+.carousel-inner > .item > img {
+    margin: 0 auto;
+}
+
+.carousel-inner img {
+    width: 460px;
+    height: 345px;
+}
+
+#footer {
+    margin-top: 0px;
+}
+
+#wrapper{
+    position: absolute;
+    top:51px;
+}
+
+#menu-toggle{
+    position: relative;
+    margin-top: 5px;
+}

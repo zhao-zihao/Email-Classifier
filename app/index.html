@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Gmail API demo</title>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="./styles/simple-sidebar.css">
+    <link rel="stylesheet" type="text/css" href="./styles/mystyle.css">
+  </head>
+  <body>
+      
+    <div id="welcome" class="hidden"></div> 
+    <div id="header"></div> <!--header --> 
+    <div id="wrapper">
+      <!-- Sidebar -->
+        <div id="sidebar-wrapper" class="hidden">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Email (SIT)
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Inbox</a>
+                </li>
+                <li>
+                    <a href="#">Social</a>
+                </li>
+                <li>
+                    <a href="#">Promotion</a>
+                </li>
+                <li>
+                    <a href="#">Stevens</a>
+                </li>
+                <li>
+                    <a href="#">About</a>
+                </li>
+                <li>
+                    <a href="#">Services</a>
+                </li>
+                <li>
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">                    
+                              <a href="#menu-toggle" class="btn btn-default hidden" id="menu-toggle" ><span class="glyphicon glyphicon-th-list"></span>Menu</a>   
+                              <div id="querymodal"></div> 
+                              <div id="inbox"></div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div><!-- /#wrapper -->
+    <div id="footer"></div> <!--footer -->
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="./scripts/app.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="./scripts/loadviews.js"></script>
+  </body>
+</html>
