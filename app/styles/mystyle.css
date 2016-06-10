@@ -7,16 +7,15 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
-
-footer {
+.footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
   background-color: #f5f5f5;
-}
-
+  padding-top: 20px;
+} 
 iframe {
         width: 100%;
         border: 0;
@@ -34,10 +33,6 @@ iframe {
     height: 345px;
 }
 
-#footer {
-    margin-top: 0px;
-}
-
 #wrapper{
     position: absolute;
     top:51px;
@@ -47,3 +42,12 @@ iframe {
     position: relative;
     margin-top: 5px;
 }
+/* style sidebar */
+.sidebar-active {
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+}
+.selected {
+    color: blue;
+  }
