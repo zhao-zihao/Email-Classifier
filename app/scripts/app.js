@@ -110,20 +110,8 @@
         });
       }
 function appendMessageRowPersonal(message) {  // add email in home page
-    
-        $('#personal-table').append(
-          '<tr>\
-            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
-            <td>\
-              <a href="#message-modal-' + message.id +
-                '" data-toggle="modal" id="message-link-' + message.id+'">' +
-                getHeader(message.payload.headers, 'Subject') +
-              '</a>\
-            </td>\
-            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
-          </tr>'
-        );
-         console.log("append personal modal to html.body");
+        appendHeaderToBody(message,'#personal-table');
+        console.log("append personal modal to html.body");
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
@@ -134,9 +122,11 @@ function appendMessageRowPersonal(message) {  // add email in home page
     function displayStevens(query_input){
         query_input="Stevens Announcement";
         listMessages("me",query_input,function(result){
+        /*
         for(var i=0;i<result.length;++i){
           console.log(result[i].id);
         }
+        */
          $.each(result, function() { 
             var messageRequest = gapi.client.gmail.users.messages.get({
               'userId': 'me',    
@@ -146,20 +136,9 @@ function appendMessageRowPersonal(message) {  // add email in home page
           });
         })};
  function appendMessageRowStevens(message){
-     $('#stevens-table').append(
-          '<tr>\
-            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
-            <td>\
-              <a href="#message-modal-' + message.id +
-                '" data-toggle="modal" id="message-link-' + message.id+'">' +
-                getHeader(message.payload.headers, 'Subject') +
-              '</a>\
-            </td>\
-            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
-          </tr>'
-        );
+        appendHeaderToBody(message,'#stevens-table');
         console.log("append stevens modal to html.body");
-        appendModalToBody(message);
+        appendModalToBody(message,'#stevens-modal');
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
           $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
@@ -168,18 +147,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
  }
  function appendMessageRowQuery(message) {  
          //add table to query_modal
-        $('#query_tbody').append(          
-          '<tr>\
-            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
-            <td>\
-              <a href="#message-modal-' + message.id +
-                '" data-toggle="modal" id="message-link-' + message.id+'">' +
-                getHeader(message.payload.headers, 'Subject') +
-              '</a>\
-            </td>\
-            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
-          </tr>'
-        );
+        appendHeaderToBody(message,'#query_tbody');
         //add modal to #pop_up_modal
         appendModalToBody(message,'#pop_up_modal');
         $('#message-link-'+message.id).on('click', function(){
@@ -189,7 +157,8 @@ function appendMessageRowPersonal(message) {  // add email in home page
       }
 
     function appendHeaderToBody(message,target){
-        $('#inbox-table').append(
+        if(target===undefined) target='#inbox-table';
+        $(target).append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
@@ -206,7 +175,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
     function appendModalToBody(message,target){
         
     if(target===undefined) target="body";
-        
+    if(target==='#stevens-modal') console.log("stevens works");   
     $(target).append(      //add modal to index.html body
           '<div class="modal fade" id="message-modal-' + message.id +
               '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
@@ -329,7 +298,7 @@ function listMessages(userId, query, callback) {
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
           $('#menu-toggle').removeClass('hidden');
-          $('#footer').addClass('hidden');
+          $('#footer').empty();
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
               if(query_input=='') {
