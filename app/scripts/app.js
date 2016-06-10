@@ -39,7 +39,7 @@
           listLabels();
           displayInbox();
           displayPersonal();
-          displayStevens();
+          displayStevens("Stevens Announcement");
       }
     /**
        * Print all Labels in the authorized user's inbox. If no labels
@@ -88,7 +88,6 @@
           'labelIds': 'CATEGORY_PERSONAL',
           'maxResults': 50
         });
-
         request.execute(function(response) {
           $.each(response.messages, function() {
             var messageRequest = gapi.client.gmail.users.messages.get({
@@ -99,9 +98,64 @@
           });
         });
       }
-      function appendMessageRowInbox(message) {  // add email in home page
+    function displayStevens(query_input){
+        if(query_input===undefined)
+        query_input="Google";
+        console.log("display stevens function works!");
+        listMessages("me",query_input,function(result){
+         $.each(result, function() { 
+            var messageRequest = gapi.client.gmail.users.messages.get({
+              'userId': 'me',    
+              'id': this.id     
+            });
+            messageRequest.execute(appendMessageRowStevens);
+          });
+        })};
+
+   function listQuery(query_input){
+        $("#query_tbody").empty();      // query modal for list header information
+        $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
+        listMessages("me",query_input,function(result){
+        for(var i=0;i<result.length;++i){
+          console.log(result[i].id);
+        }
+         $.each(result, function() { //对于每一个message遍历
+            var messageRequest = gapi.client.gmail.users.messages.get({
+              'userId': 'me',    //userId 可以用邮箱
+              'id': this.id     // this 指的每一个message，它都有一个id属性
+            });
+            messageRequest.execute(appendMessageRowQuery);
+          });
+        })};
+
+function listMessages(userId, query, callback) {
+  var getPageOfMessages = function(request, result) {
+    request.execute(function(resp) {
+      result = result.concat(resp.messages);
+      var nextPageToken = resp.nextPageToken;
+       console.log("pageToken: "+nextPageToken);
+      if (nextPageToken) {
+        request = gapi.client.gmail.users.messages.list({
+          'userId': userId,
+          'pageToken': nextPageToken,
+          'q': query
+        });
+        getPageOfMessages(request, result);
+      } else {
+        callback(result);
+      }
+    });
+  };
+  var initialRequest = gapi.client.gmail.users.messages.list({
+    'userId': userId,
+    'q': query
+  });
+  getPageOfMessages(initialRequest, []);
+};
+
+ function appendMessageRowInbox(message) {  // add email in home page
         appendHeaderToBody(message,'#inbox-table');
-        console.log("append new message body to html.body!");
+        //console.log("append header row in inbox html.body!");
         appendModalToBody(message);
             
         $('#message-link-'+message.id).on('click', function(){
@@ -109,6 +163,7 @@
           $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
         });
       }
+
 function appendMessageRowPersonal(message) {  // add email in home page
         appendHeaderToBody(message,'#personal-table');
         console.log("append personal modal to html.body");
@@ -119,30 +174,14 @@ function appendMessageRowPersonal(message) {  // add email in home page
             console.log("messges link clicked!")
         });
       }
-    function displayStevens(query_input){
-        query_input="Stevens Announcement";
-        listMessages("me",query_input,function(result){
-        /*
-        for(var i=0;i<result.length;++i){
-          console.log(result[i].id);
-        }
-        */
-         $.each(result, function() { 
-            var messageRequest = gapi.client.gmail.users.messages.get({
-              'userId': 'me',    
-              'id': this.id     
-            });
-            messageRequest.execute(appendMessageRowStevens);
-          });
-        })};
  function appendMessageRowStevens(message){
         appendHeaderToBody(message,'#stevens-table');
-        console.log("append stevens modal to html.body");
+        //console.log("append stevens modal to html.body");
         appendModalToBody(message,'#stevens-modal');
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
           $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
-            console.log("messges link clicked!")
+            //console.log("messges link clicked!")
         });
  }
  function appendMessageRowQuery(message) {  
@@ -158,6 +197,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
 
     function appendHeaderToBody(message,target){
         if(target===undefined) target='#inbox-table';
+        //console.log(message);
         $(target).append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
@@ -242,48 +282,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         }
         return '';
       }
-
-function listMessages(userId, query, callback) {
-  var getPageOfMessages = function(request, result) {
-    request.execute(function(resp) {
-      result = result.concat(resp.messages);
-      var nextPageToken = resp.nextPageToken;
-       console.log("pageToken: "+nextPageToken);
-      if (nextPageToken) {
-        request = gapi.client.gmail.users.messages.list({
-          'userId': userId,
-          'pageToken': nextPageToken,
-          'q': query
-        });
-        getPageOfMessages(request, result);
-      } else {
-        callback(result);
-      }
-    });
-  };
-  var initialRequest = gapi.client.gmail.users.messages.list({
-    'userId': userId,
-    'q': query
-  });
-  getPageOfMessages(initialRequest, []);
-};
    
-    function listQuery(query_input){
-        $("#query_tbody").empty();      // query modal for list header information
-        $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
-        listMessages("me",query_input,function(result){
-        for(var i=0;i<result.length;++i){
-          console.log(result[i].id);
-        }
-         $.each(result, function() { //对于每一个message遍历
-            var messageRequest = gapi.client.gmail.users.messages.get({
-              'userId': 'me',    //userId 可以用邮箱
-              'id': this.id     // this 指的每一个message，它都有一个id属性
-            });
-            messageRequest.execute(appendMessageRowQuery);
-          });
-        })};
-        //listMessages("me","wix",function(){console.log("hehe")})
 
       function handleAuthResult(authResult) {
         if(authResult && !authResult.error) {
@@ -304,7 +303,6 @@ function listMessages(userId, query, callback) {
               if(query_input=='') {
                 alert("Enter Some Text In Input Field");
                 }else{
-                //alert(query_input);
                 $("#query_modal").modal();
                 listQuery(query_input);
                 };
