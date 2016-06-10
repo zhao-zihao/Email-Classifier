@@ -332,6 +332,7 @@ function listMessages(userId, query, callback) {
                console.log("stevens-button click!")
           });  
         } else {
+          $('#mailcontent .emails').addClass('hidden');
           $('#menu-toggle').addClass('hidden');
           $('#sidebar-wrapper').addClass('hidden');
           $('#nav_search').addClass("hidden");
