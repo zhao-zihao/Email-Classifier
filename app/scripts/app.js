@@ -38,7 +38,8 @@
       function loadEmails(){
           listLabels();
           displayInbox();
-          displayPersonal()
+          displayPersonal();
+          displayStevens();
       }
     /**
        * Print all Labels in the authorized user's inbox. If no labels
@@ -130,8 +131,42 @@ function appendMessageRowPersonal(message) {  // add email in home page
             console.log("messges link clicked!")
         });
       }
-
- function appendMessageRow2(message) {  
+    function displayStevens(query_input){
+        query_input="Stevens Announcement";
+        listMessages("me",query_input,function(result){
+        for(var i=0;i<result.length;++i){
+          console.log(result[i].id);
+        }
+         $.each(result, function() { 
+            var messageRequest = gapi.client.gmail.users.messages.get({
+              'userId': 'me',    
+              'id': this.id     
+            });
+            messageRequest.execute(appendMessageRowStevens);
+          });
+        })};
+ function appendMessageRowStevens(message){
+     $('#stevens-table').append(
+          '<tr>\
+            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+                getHeader(message.payload.headers, 'Subject') +
+              '</a>\
+            </td>\
+            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+          </tr>'
+        );
+        console.log("append stevens modal to html.body");
+        appendModalToBody(message);
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+            console.log("messges link clicked!")
+        });
+ }
+ function appendMessageRowQuery(message) {  
          //add table to query_modal
         $('#query_tbody').append(          
           '<tr>\
@@ -199,7 +234,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
       function getHeader(headers, index) {
         var header = '';
         $.each(headers, function(key,value){ // headers is an obj array, just use key,value, key=index, value=obj
-           // console.log(key+" message.headers.name: "+this.name+"  Value:"+this.value);
+          // console.log(key+" message.headers.name: "+this.name+"  Value:"+this.value);
           if(this.name === index){
             header = this.value;
           }
@@ -263,8 +298,8 @@ function listMessages(userId, query, callback) {
   });
   getPageOfMessages(initialRequest, []);
 };
-
-    function listMessages2(query_input){
+   
+    function listQuery(query_input){
         $("#query_tbody").empty();      // query modal for list header information
         $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
         listMessages("me",query_input,function(result){
@@ -276,7 +311,7 @@ function listMessages(userId, query, callback) {
               'userId': 'me',    //userId 可以用邮箱
               'id': this.id     // this 指的每一个message，它都有一个id属性
             });
-            messageRequest.execute(appendMessageRow2);
+            messageRequest.execute(appendMessageRowQuery);
           });
         })};
         //listMessages("me","wix",function(){console.log("hehe")})
@@ -302,19 +337,31 @@ function listMessages(userId, query, callback) {
                 }else{
                 //alert(query_input);
                 $("#query_modal").modal();
-                listMessages2(query_input);
+                listQuery(query_input);
                 };
           });
+          $('#inbox-button').addClass("sidebar-active");
           $('#inbox-button').on('click',function(){
-              $('#personal').addClass('hidden');
+              $('#mailcontent .emails').addClass('hidden');
               $('#inbox').removeClass('hidden');
+              $('.sidebar-nav a').removeClass("sidebar-active");
+              $('#inbox-button').addClass("sidebar-active");
               console.log("inbox-button click!")
           });
           $('#personal-button').on('click',function(){
+              $('#mailcontent .emails').addClass('hidden');
               $('#personal').removeClass('hidden');
-              $('#inbox').addClass('hidden');
+              $('.sidebar-nav a').removeClass("sidebar-active");
+              $('#personal-button').addClass("sidebar-active");
                console.log("personal-button click!")
           });
+            $('#stevens-button').on('click',function(){
+              $('#mailcontent .emails').addClass('hidden');
+              $('#stevens').removeClass('hidden');
+              $('.sidebar-nav a').removeClass("sidebar-active");
+              $('#stevens-button').addClass("sidebar-active");
+               console.log("stevens-button click!")
+          });  
         } else {
           $('#menu-toggle').addClass('hidden');
           $('#sidebar-wrapper').addClass('hidden');

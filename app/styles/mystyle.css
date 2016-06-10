@@ -42,3 +42,12 @@ iframe {
     position: relative;
     margin-top: 5px;
 }
+/* style sidebar */
+.sidebar-active {
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+}
+.selected {
+    color: blue;
+  }
