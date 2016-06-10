@@ -29,12 +29,41 @@
     
       //load gmail api
       function loadGmailApi() {
-        gapi.client.load('gmail', 'v1', displayInbox);
+        gapi.client.load('gmail', 'v1', loadEmails);
       }
       function handleSignOut(){
         //gapi.auth.signOut();      // this method don't work on localhost
         window.location.href = "https://accounts.google.com/logout"; //sign out google account 
       }
+      function loadEmails(){
+          listLabels();
+          displayInbox();
+          displayPersonal()
+      }
+    /**
+       * Print all Labels in the authorized user's inbox. If no labels
+       * are found an appropriate message is printed.
+       */
+      function listLabels() {
+        var request = gapi.client.gmail.users.labels.list({
+          'userId': 'me'
+        });
+
+        request.execute(function(resp) {
+          var labels = resp.labels;
+          console.log('Labels:');
+
+          if (labels && labels.length > 0) {
+            for (i = 0; i < labels.length; i++) {
+              var label = labels[i];
+              console.log(label.name)
+            }
+          } else {
+            console.log('No Labels found.');
+          }
+        });
+      }
+
       function displayInbox() {
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
@@ -48,13 +77,40 @@
               'userId': 'me',
               'id': this.id
             });
-            messageRequest.execute(appendMessageRow);
+            messageRequest.execute(appendMessageRowInbox);
           });
         });
       }
+    function displayPersonal() {
+        var request = gapi.client.gmail.users.messages.list({
+          'userId': 'me',
+          'labelIds': 'CATEGORY_PERSONAL',
+          'maxResults': 50
+        });
 
-      function appendMessageRow(message) {  // add email in home page
-        $('.table-inbox tbody').append(
+        request.execute(function(response) {
+          $.each(response.messages, function() {
+            var messageRequest = gapi.client.gmail.users.messages.get({
+              'userId': 'me',
+              'id': this.id
+            });
+            messageRequest.execute(appendMessageRowPersonal);
+          });
+        });
+      }
+      function appendMessageRowInbox(message) {  // add email in home page
+        appendHeaderToBody(message,'#inbox-table');
+        console.log("append new message body to html.body!");
+        appendModalToBody(message);
+            
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+        });
+      }
+function appendMessageRowPersonal(message) {  // add email in home page
+    
+        $('#personal-table').append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
@@ -66,34 +122,12 @@
             <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
           </tr>'
         );
-
-        $('body').append(      //add modal to index.html body
-          '<div class="modal fade" id="message-modal-' + message.id +
-              '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
-            <div class="modal-dialog modal-lg">\
-              <div class="modal-content">\
-                <div class="modal-header">\
-                  <button type="button"\
-                          class="close"\
-                          data-dismiss="modal"\
-                          aria-label="Close">\
-                    <span aria-hidden="true">&times;</span></button>\
-                  <h4 class="modal-title" id="myModalLabel">' +
-                    getHeader(message.payload.headers, 'Subject') +
-                  '</h4>\
-                </div>\
-                <div class="modal-body">\
-                  <iframe id="message-iframe-'+message.id+'" srcdoc="<p>Loading...</p>">\
-                  </iframe>\
-                </div>\
-              </div>\
-            </div>\
-          </div>'
-        );
-            
+         console.log("append personal modal to html.body");
+        appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
           $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+            console.log("messges link clicked!")
         });
       }
 
@@ -112,7 +146,33 @@
           </tr>'
         );
         //add modal to #pop_up_modal
-      $('#pop_up_modal').append(
+        appendModalToBody(message,'#pop_up_modal');
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $('body', ifrm).html(getBody(message.payload));
+        });
+      }
+
+    function appendHeaderToBody(message,target){
+        $('#inbox-table').append(
+          '<tr>\
+            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+                getHeader(message.payload.headers, 'Subject') +
+              '</a>\
+            </td>\
+            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+          </tr>'
+        );
+    }
+
+    function appendModalToBody(message,target){
+        
+    if(target===undefined) target="body";
+        
+    $(target).append(      //add modal to index.html body
           '<div class="modal fade" id="message-modal-' + message.id +
               '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
             <div class="modal-dialog modal-lg">\
@@ -135,17 +195,11 @@
             </div>\
           </div>'
         );
-     
-        $('#message-link-'+message.id).on('click', function(){
-          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload));
-        });
-      }
-    
+    }
       function getHeader(headers, index) {
         var header = '';
         $.each(headers, function(key,value){ // headers is an obj array, just use key,value, key=index, value=obj
-            console.log(key+" message.headers.name: "+this.name+"  Value:"+this.value);
+           // console.log(key+" message.headers.name: "+this.name+"  Value:"+this.value);
           if(this.name === index){
             header = this.value;
           }
@@ -190,6 +244,7 @@ function listMessages(userId, query, callback) {
     request.execute(function(resp) {
       result = result.concat(resp.messages);
       var nextPageToken = resp.nextPageToken;
+       console.log("pageToken: "+nextPageToken);
       if (nextPageToken) {
         request = gapi.client.gmail.users.messages.list({
           'userId': userId,
@@ -231,7 +286,7 @@ function listMessages(userId, query, callback) {
           loadGmailApi();                               //email page
           $('#authorize-button').addClass("hidden");
           $('#signout-button').removeClass("hidden");
-          $('.table-inbox').removeClass("hidden");
+          $('#inbox').removeClass("hidden");
           $('#signout-button').on('click', function(){
             handleSignOut();
           });
@@ -239,6 +294,7 @@ function listMessages(userId, query, callback) {
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
           $('#menu-toggle').removeClass('hidden');
+          $('#footer').addClass('hidden');
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
               if(query_input=='') {
@@ -248,6 +304,16 @@ function listMessages(userId, query, callback) {
                 $("#query_modal").modal();
                 listMessages2(query_input);
                 };
+          });
+          $('#inbox-button').on('click',function(){
+              $('#personal').addClass('hidden');
+              $('#inbox').removeClass('hidden');
+              console.log("inbox-button click!")
+          });
+          $('#personal-button').on('click',function(){
+              $('#personal').removeClass('hidden');
+              $('#inbox').addClass('hidden');
+               console.log("personal-button click!")
           });
         } else {
           $('#menu-toggle').addClass('hidden');

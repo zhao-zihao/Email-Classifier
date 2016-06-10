@@ -23,10 +23,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">Inbox</a>
+                    <a id="inbox-button" href="#">Inbox</a>
                 </li>
                 <li>
-                    <a href="#">Social</a>
+                    <a id="personal-button" href="#">Personal</a>
                 </li>
                 <li>
                     <a href="#">Promotion</a>
@@ -50,22 +50,24 @@
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <div class="container-fluid">
-                <div class="row">
+                <div id='mailcontent' class="row">
                     <div class="col-md-12">                    
                               <a href="#menu-toggle" class="btn btn-default hidden" id="menu-toggle" ><span class="glyphicon glyphicon-th-list"></span>Menu</a>   
                               <div id="querymodal"></div> 
-                              <div id="inbox"></div> 
+                              <div id="inbox" class="hidden"></div> 
+                              <div id="personal" class="hidden"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <footer id="footer" class="footer" ></footer> <!--footer -->
+                        
                     </div>
                 </div>
             </div>
         </div>
         <!-- /#page-content-wrapper -->
     </div><!-- /#wrapper -->
+    <div id='footer'></div>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="./scripts/app.js"></script>
