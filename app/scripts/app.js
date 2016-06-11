@@ -72,14 +72,19 @@
         });
 
         request.execute(function(response) {
+            console.log("gapi.client.gmail.users.messages: ");
             console.log(gapi.client.gmail.users.messages);
           $.each(response.messages, function() {
-            var messageRequest = gapi.client.gmail.users.messages.get({
+              //send request to gapi server for a specific message
+            gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
+            }).then(function(resp){
+             // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
+               console.log(resp);
+               //console.log(resp.result);
+               appendMessageRowInbox(resp.result);
             });
-            
-            messageRequest.execute(appendMessageRowInbox);
           });
         });
       }
@@ -105,13 +110,16 @@
         console.log("display stevens function works!");
         listMessages("me",query_input,function(result){
          $.each(result, function() { 
-            var messageRequest = gapi.client.gmail.users.messages.get({
+            gapi.client.gmail.users.messages.get({
               'userId': 'me',    
               'id': this.id     
+            }).then(function(resp){
+                //console.log(resp.status);
+                appendMessageRowStevens(resp.result);
             });
-            messageRequest.execute(appendMessageRowStevens);
+            });
           });
-        })};
+        }
 
    function listQuery(query_input){
         $("#query_tbody").empty();      // query modal for list header information
@@ -122,7 +130,7 @@
               'userId': 'me',    
               'id': this.id     
             });
-            messageRequest.execute(appendMessageRowQuery);
+            messageRequest.execute(appendMessageRowQuery(message));
           });
         })};
 
@@ -151,11 +159,12 @@ function listMessages(userId, query, callback) {
   getPageOfMessages(initialRequest, []);
 };
 
- function appendMessageRowInbox(message) {  // add email in home page
+ function appendMessageRowInbox(message) {  // add email in home page //????
+        
+       // console.log(message);
         appendHeaderToBody(message,'#inbox-table');
         //console.log("append header row in inbox html.body!");
         appendModalToBody(message);
-            
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
           $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
