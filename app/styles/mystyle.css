@@ -41,6 +41,7 @@ iframe {
 #menu-toggle{
     position: relative;
     margin-top: 5px;
+    margin-bottom: 5px;
 }
 /* style sidebar */
 .sidebar-active {

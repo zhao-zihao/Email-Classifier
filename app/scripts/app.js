@@ -25,8 +25,6 @@
         return false;
       }
 
-
-    
       //load gmail api
       function loadGmailApi() {
         gapi.client.load('gmail', 'v1', loadEmails);
@@ -66,18 +64,21 @@
       }
 
       function displayInbox() {
+        $('#inbox-button').trigger('click');
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'INBOX',
-          'maxResults': 50
+          'maxResults': 5
         });
 
         request.execute(function(response) {
+            console.log(gapi.client.gmail.users.messages);
           $.each(response.messages, function() {
             var messageRequest = gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
             });
+            
             messageRequest.execute(appendMessageRowInbox);
           });
         });
@@ -86,7 +87,7 @@
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'CATEGORY_PERSONAL',
-          'maxResults': 50
+          'maxResults': 3
         });
         request.execute(function(response) {
           $.each(response.messages, function() {
@@ -116,13 +117,10 @@
         $("#query_tbody").empty();      // query modal for list header information
         $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
         listMessages("me",query_input,function(result){
-        for(var i=0;i<result.length;++i){
-          console.log(result[i].id);
-        }
-         $.each(result, function() { //对于每一个message遍历
+         $.each(result, function() { 
             var messageRequest = gapi.client.gmail.users.messages.get({
-              'userId': 'me',    //userId 可以用邮箱
-              'id': this.id     // this 指的每一个message，它都有一个id属性
+              'userId': 'me',    
+              'id': this.id     
             });
             messageRequest.execute(appendMessageRowQuery);
           });
@@ -170,7 +168,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+          $('body', ifrm).html(getBody(message.payload)); 
             console.log("messges link clicked!")
         });
       }
@@ -282,7 +280,6 @@ function appendMessageRowPersonal(message) {  // add email in home page
         }
         return '';
       }
-   
 
       function handleAuthResult(authResult) {
         if(authResult && !authResult.error) {
@@ -292,7 +289,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           $('#inbox').removeClass("hidden");
           $('#signout-button').on('click', function(){
             handleSignOut();
-          });
+          });   
           $('#nav_search').removeClass("hidden");
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
@@ -309,6 +306,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           });
           $('#inbox-button').addClass("sidebar-active");
           $('#inbox-button').on('click',function(){
+              
               $('#mailcontent .emails').addClass('hidden');
               $('#inbox').removeClass('hidden');
               $('.sidebar-nav a').removeClass("sidebar-active");
