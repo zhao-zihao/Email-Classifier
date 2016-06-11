@@ -10,7 +10,9 @@ $(document).ready(function(){
   $('#querymodal').load('views/querymodal.html');
   $("#menu-toggle").click(function(e) {
         e.preventDefault();
-        $("#wrapper").toggleClass("toggled"); // from remove to add OR from add to remove this toggled class
+        $("#wrapper").toggleClass("toggled").promise().done(function(){
+            console.log("toggled wraper");
+        }) // from remove to add OR from add to remove this toggled class
   });
-    
+   
 });
