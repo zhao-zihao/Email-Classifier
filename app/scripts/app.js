@@ -65,28 +65,45 @@
 
       function displayInbox() {
         $('#inbox-button').trigger('click');
-        var request = gapi.client.gmail.users.messages.list({
+        gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'INBOX',
           'maxResults': 5
-        });
-
-        request.execute(function(response) {
+        }).then(function(resp){
+            //console.log(resp);
             console.log("gapi.client.gmail.users.messages: ");
             console.log(gapi.client.gmail.users.messages);
-          $.each(response.messages, function() {
+          $.each(resp.result.messages, function() {
               //send request to gapi server for a specific message
             gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
             }).then(function(resp){
              // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
-               console.log(resp);
+               //console.log(resp);
                //console.log(resp.result);
                appendMessageRowInbox(resp.result);
             });
           });
         });
+           gapi.client.gmail.users.messages.list({
+          'userId': 'me',
+          'labelIds': 'UNREAD',
+          'maxResults': 5
+        }).then(function(resp){
+            //console.log(resp);
+          $.each(resp.result.messages, function() {
+              //send request to gapi server for a specific message
+            gapi.client.gmail.users.messages.get({
+              'userId': 'me',
+              'id': this.id
+            }).then(function(resp){
+                console.log(resp);
+               appendMessageRowInbox(resp.result,'#inbox-table-unread');
+            });
+          });
+        });
+          
       }
     function displayPersonal() {
         var request = gapi.client.gmail.users.messages.list({
@@ -96,11 +113,12 @@
         });
         request.execute(function(response) {
           $.each(response.messages, function() {
-            var messageRequest = gapi.client.gmail.users.messages.get({
+            gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
+            }).then(function(resp){
+                appendMessageRowPersonal(resp.result);
             });
-            messageRequest.execute(appendMessageRowPersonal);
           });
         });
       }
@@ -126,11 +144,14 @@
         $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
         listMessages("me",query_input,function(result){
          $.each(result, function() { 
-            var messageRequest = gapi.client.gmail.users.messages.get({
+            gapi.client.gmail.users.messages.get({
               'userId': 'me',    
               'id': this.id     
+            }).then(function(resp){
+                //console.log(resp);
+                appendMessageRowQuery(resp.result);
             });
-            messageRequest.execute(appendMessageRowQuery(message));
+            //messageRequest.execute(appendMessageRowQuery(message));
           });
         })};
 
@@ -159,10 +180,10 @@ function listMessages(userId, query, callback) {
   getPageOfMessages(initialRequest, []);
 };
 
- function appendMessageRowInbox(message) {  // add email in home page //????
-        
+ function appendMessageRowInbox(message,target_tab_table) {  // add email in home page //????
+        if(target_tab_table===undefined) target_tab_table='#inbox-table';
        // console.log(message);
-        appendHeaderToBody(message,'#inbox-table');
+        appendHeaderToBody(message,target_tab_table);
         //console.log("append header row in inbox html.body!");
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
@@ -204,8 +225,23 @@ function appendMessageRowPersonal(message) {  // add email in home page
 
     function appendHeaderToBody(message,target){
         if(target===undefined) target='#inbox-table';
+        console.log(message);
         //console.log(message);
+        if(message.labelIds.indexOf('UNREAD')!=-1){
         $(target).append(
+          '<tr>\
+            <td>'+getHeader(message.payload.headers, 'From')+'<mark><strong>UNREAD</strong></mark>'+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+                getHeader(message.payload.headers, 'Subject') +
+              '</a>\
+            </td>\
+            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+          </tr>'
+        );
+        }else{
+           $(target).append(
           '<tr>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
@@ -216,13 +252,14 @@ function appendMessageRowPersonal(message) {  // add email in home page
             </td>\
             <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
           </tr>'
-        );
+        ); 
+        }
     }
-
+    
     function appendModalToBody(message,target){
         
     if(target===undefined) target="body";
-    if(target==='#stevens-modal') console.log("stevens works");   
+    //if(target==='#stevens-modal') console.log("stevens works");   
     $(target).append(      //add modal to index.html body
           '<div class="modal fade" id="message-modal-' + message.id +
               '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
