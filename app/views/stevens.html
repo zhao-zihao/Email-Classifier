@@ -1,15 +1,70 @@
 
-                  
-<table class="row table table-striped table-hover table-responsive">
-                            <thead> <!--table head -->
-                                <tr>    
-                                    <th class="col-md-2">From</th>
-                                    <th class="col-md-8">Subject</th>
-                                    <th class="col-md-2">Date/Time</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stevens-table"></tbody>  <!--table body <td></td> table data--> 
-                        </table>
+<div id="stevens-modal"></div>
 
-<div id="stevens-modal"> </div> 
- 
+
+<ul class="nav nav-tabs">
+  <li class="active">
+    <a data-toggle="tab" href="#all-personal">ALL</a></li>
+  <li>
+    <a data-toggle="tab" href="#unread-personal">Unread</a></li>
+  <li>
+    <a data-toggle="tab" href="#read-personal">Read</a></li>
+  <li>
+    <a data-toggle="tab" href="#delete-personal">Delete</a></li>
+</ul>
+<div class="tab-content">
+  <div id="all-inbox" class="tab-pane fade in active">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">Check</th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th>
+        </tr>
+      </thead>
+      <tbody id="stevens-table"></tbody>
+     </table>
+  </div>
+  <div id="unread-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">Check</th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th></tr>
+      </thead>
+      <tbody id="stevens-table-unread"></tbody>
+     </table>
+  </div>
+  <div id="read-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">Check</th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th></tr>
+      </thead>
+      <tbody id=""></tbody>
+     </table>
+  </div>
+  <div id="delete-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">Check</th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th>
+        </tr>
+      </thead>
+      <tbody id="stevens-table-delete"></tbody>
+     </table>
+  </div>
+</div>
