@@ -27,7 +27,7 @@
 
       //load gmail api
       function loadGmailApi() {
-        gapi.client.load('gmail', 'v1', loadEmails);
+        gapi.client.load('gmail', 'v1').then(loadEmails);
       }
       function handleSignOut(){
         //gapi.auth.signOut();      // this method don't work on localhost
@@ -68,7 +68,7 @@
         gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'INBOX',
-          'maxResults': 5
+          'maxResults': 30
         }).then(function(resp){
             //console.log(resp);
             console.log("gapi.client.gmail.users.messages: ");
@@ -86,30 +86,32 @@
             });
           });
         });
+          //inbox-table-unread
            gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'UNREAD',
           'maxResults': 5
         }).then(function(resp){
-            //console.log(resp);
+            console.log(resp);
           $.each(resp.result.messages, function() {
               //send request to gapi server for a specific message
             gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
             }).then(function(resp){
-                console.log(resp);
+               console.log('resp: ', resp);  
                appendMessageRowInbox(resp.result,'#inbox-table-unread');
             });
           });
         });
+          //inbox-table-delete
           
       }
     function displayPersonal() {
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'CATEGORY_PERSONAL',
-          'maxResults': 3
+          'maxResults': 5
         });
         request.execute(function(response) {
           $.each(response.messages, function() {
@@ -138,7 +140,22 @@
             });
           });
         }
+ function listDelete(query_input='older_than:1m'){
 
+        $("#inbox-table-delete").empty();     
+        //$('#pop_up_modal').empty();         
+        listMessages("me",query_input,function(result){
+         $.each(result, function() { 
+            gapi.client.gmail.users.messages.get({
+              'userId': 'me',    
+              'id': this.id     
+            }).then(function(resp){
+                //console.log(resp);
+                appendMessageRowInbox(resp.result,'#inbox-table-delete');
+            });
+            //messageRequest.execute(appendMessageRowQuery(message));
+          });
+        })};
    function listQuery(query_input){
         $("#query_tbody").empty();      // query modal for list header information
         $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
@@ -154,7 +171,7 @@
             //messageRequest.execute(appendMessageRowQuery(message));
           });
         })};
-
+/*the messages array as a result will be in callback function body*/
 function listMessages(userId, query, callback) {
   var getPageOfMessages = function(request, result) {
     request.execute(function(resp) {
@@ -187,9 +204,24 @@ function listMessages(userId, query, callback) {
         //console.log("append header row in inbox html.body!");
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
-          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+          var ifrm =  $('#message-iframe-'+message.id)[0].contentDocument || $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $(ifrm).contents().find('body').html(getBody(message.payload));
+          //$('body', ifrm).html(getBody(message.payload)); 
+          console.log("message: ",message);
+          var temp=getBody(message.payload);
+            console.log("getbody: ",temp);
+            console.log("end body");
+            $.each(message.payload.headers,function(){
+                console.log(this.name);
+            });
+            //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm         content using html content.
         });
+         $('#message-link-'+message.id).mouseenter(function(){
+                //$('#message-tr-'+message.id).addClass('bg-success');
+                $('#right-side-col').empty();
+                $('#right-side-col').append(getBody(message.payload));
+         });
+        
       }
 
 function appendMessageRowPersonal(message) {  // add email in home page
@@ -201,6 +233,11 @@ function appendMessageRowPersonal(message) {  // add email in home page
           $('body', ifrm).html(getBody(message.payload)); 
             console.log("messges link clicked!")
         });
+        $('#message-link-'+message.id).mouseenter(function(){
+                //$('#message-tr-'+message.id).addClass('bg-success');
+                $('#right-side-col').empty();
+                $('#right-side-col').append(getBody(message.payload));
+         });
       }
  function appendMessageRowStevens(message){
         appendHeaderToBody(message,'#stevens-table');
@@ -208,9 +245,14 @@ function appendMessageRowPersonal(message) {  // add email in home page
         appendModalToBody(message,'#stevens-modal');
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
-            //console.log("messges link clicked!")
+          $('body', ifrm).html(getBody(message.payload)); 
+            console.log("messges link clicked!")
         });
+         $('#message-link-'+message.id).mouseenter(function(){
+                //$('#message-tr-'+message.id).addClass('bg-success');
+                $('#right-side-col').empty();
+                $('#right-side-col').append(getBody(message.payload));
+         });
  }
  function appendMessageRowQuery(message) {  
          //add table to query_modal
@@ -225,24 +267,41 @@ function appendMessageRowPersonal(message) {  // add email in home page
 
     function appendHeaderToBody(message,target){
         if(target===undefined) target='#inbox-table';
-        console.log(message);
         //console.log(message);
+        //console.log(message);
+        var time= new Date(getHeader(message.payload.headers, 'Date'));
+        var prettyTime= $.format.prettyDate(time);
+        if(prettyTime==="more than 5 weeks ago"){
+            prettyTime=$.format.date(time, "ddd, dd/MMM/yyyy");
+        }else{
+            prettyTime=prettyTime+$.format.date(time, " (ddd)");
+        }
         if(message.labelIds.indexOf('UNREAD')!=-1){
         $(target).append(
-          '<tr>\
-            <td>'+getHeader(message.payload.headers, 'From')+'<mark><strong>UNREAD</strong></mark>'+'</td>\
+          '<tr id="message-tr-' + message.id+'">\
+            <td>\
+                <div class="checkbox">\
+                    <label><input type="checkbox" value="#check-'+ message.id +'"></label>\
+                </div>\
+            </td>\
+            <td>'+'<strong>'+getHeader(message.payload.headers, 'From')+'</strong>'+'</td>\
             <td>\
               <a href="#message-modal-' + message.id +
                 '" data-toggle="modal" id="message-link-' + message.id+'">' +
-                getHeader(message.payload.headers, 'Subject') +
+               '<strong>'+getHeader(message.payload.headers, 'Subject') +'</strong>'+
               '</a>\
             </td>\
-            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+            <td>'+prettyTime+'</td>\
           </tr>'
         );
         }else{
            $(target).append(
-          '<tr>\
+          '<tr id="message-tr-' + message.id+'">\
+            <td>\
+                <div class="checkbox">\
+                    <label><input type="checkbox" value="#check-'+ message.id +'"></label>\
+                </div>\
+            </td>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
               <a href="#message-modal-' + message.id +
@@ -250,7 +309,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
                 getHeader(message.payload.headers, 'Subject') +
               '</a>\
             </td>\
-            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+            <td>'+prettyTime+'</td>\
           </tr>'
         ); 
         }
@@ -306,6 +365,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           encodedBody = getHTMLPart(message.parts);
         }
         encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+        //console.log("encodeBody: ",encodedBody);
         return decodeURIComponent(escape(window.atob(encodedBody)));
       }
 
@@ -340,7 +400,8 @@ function appendMessageRowPersonal(message) {  // add email in home page
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
           $('#menu-toggle').removeClass('hidden');
-          $('#footer').empty();
+          $('#right-side-toggle').removeClass('hidden');
+          $('#footer').remove();
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
               if(query_input=='') {
@@ -372,7 +433,23 @@ function appendMessageRowPersonal(message) {  // add email in home page
               $('.sidebar-nav a').removeClass("sidebar-active");
               $('#stevens-button').addClass("sidebar-active");
                console.log("stevens-button click!")
-          });  
+          }); 
+            $('#right-side-toggle').on('click',function(){
+                $('#right-side-col').toggleClass('hidden');
+            });
+            $('#delete-button').on('click',function(){
+               //console.log($('#time option:selected'));
+               //console.log($('#time').index());
+               var res=$('#time option:selected').index();
+               if(res===0){
+                   listDelete('older_than:1m');
+               }else if(res===1){
+                   listDelete('older_than:3m');
+               }else if(res===2){
+                   listDelete('older_than:6m');
+               };
+            });   
+           // $('#time').change(function(){console.log($('#time option:selected').val());} );
         } else {
           $('#mailcontent .emails').addClass('hidden');
           $('#menu-toggle').addClass('hidden');

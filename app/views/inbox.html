@@ -5,6 +5,8 @@
     <a data-toggle="tab" href="#unread-inbox">Unread</a></li>
   <li>
     <a data-toggle="tab" href="#read-inbox">Read</a></li>
+  <li>
+    <a data-toggle="tab" href="#delete-inbox">Delete</a></li>
 </ul>
 <div class="tab-content">
   <div id="all-inbox" class="tab-pane fade in active">
@@ -12,9 +14,11 @@
       <thead>
         <!--table head -->
         <tr>
+          <th class="col-md-1">Check</th>
           <th class="col-md-2">From</th>
-          <th class="col-md-8">Subject</th>
-          <th class="col-md-2">Date/Time</th></tr>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th>
+        </tr>
       </thead>
       <tbody id="inbox-table"></tbody>
      </table>
@@ -24,8 +28,9 @@
       <thead>
         <!--table head -->
         <tr>
+          <th class="col-md-1">Check</th>
           <th class="col-md-2">From</th>
-          <th class="col-md-8">Subject</th>
+          <th class="col-md-7">Subject</th>
           <th class="col-md-2">Date/Time</th></tr>
       </thead>
       <tbody id="inbox-table-unread"></tbody>
@@ -36,11 +41,26 @@
       <thead>
         <!--table head -->
         <tr>
+          <th class="col-md-1">Check</th>
           <th class="col-md-2">From</th>
-          <th class="col-md-8">Subject</th>
+          <th class="col-md-7">Subject</th>
           <th class="col-md-2">Date/Time</th></tr>
       </thead>
       <tbody id=""></tbody>
+     </table>
+  </div>
+  <div id="delete-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">Check</th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th>
+        </tr>
+      </thead>
+      <tbody id="inbox-table-delete"></tbody>
      </table>
   </div>
 </div>

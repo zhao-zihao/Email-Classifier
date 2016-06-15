@@ -21,6 +21,8 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "moment": "^2.13.0",
+    "jquery-dateFormat": "^1.0.2"
   }
 }
