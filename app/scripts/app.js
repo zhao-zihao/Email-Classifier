@@ -90,7 +90,7 @@
            gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'UNREAD',
-          'maxResults': 5
+          'maxResults': 20
         }).then(function(resp){
             console.log(resp);
           $.each(resp.result.messages, function() {
@@ -111,7 +111,7 @@
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'CATEGORY_PERSONAL',
-          'maxResults': 5
+          'maxResults': 20
         });
         request.execute(function(response) {
           $.each(response.messages, function() {
@@ -448,7 +448,8 @@ function appendMessageRowPersonal(message) {  // add email in home page
                }else if(res===2){
                    listDelete('older_than:6m');
                };
-            });   
+            }); 
+            $('#mailPage').removeClass('hidden');
            // $('#time').change(function(){console.log($('#time option:selected').val());} );
         } else {
           $('#mailcontent .emails').addClass('hidden');
