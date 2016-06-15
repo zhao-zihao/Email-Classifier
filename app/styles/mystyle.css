@@ -41,6 +41,23 @@ iframe {
 #menu-toggle{
     position: relative;
     margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+#right-side-toggle{
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.my-button{
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 /* style sidebar */
 .sidebar-active {

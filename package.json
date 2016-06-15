@@ -1,0 +1,15 @@
+{
+  "name": "emailcallssifier",
+  "version": "1.0.0",
+  "description": "2016 summer project(Stevens Institute of Technology)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "email",
+    "classifier"
+  ],
+  "author": "zihowe",
+  "license": "ISC"
+}

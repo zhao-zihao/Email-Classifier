@@ -25,11 +25,9 @@
         return false;
       }
 
-
-    
       //load gmail api
       function loadGmailApi() {
-        gapi.client.load('gmail', 'v1', loadEmails);
+        gapi.client.load('gmail', 'v1').then(loadEmails);
       }
       function handleSignOut(){
         //gapi.auth.signOut();      // this method don't work on localhost
@@ -39,7 +37,7 @@
           listLabels();
           displayInbox();
           displayPersonal();
-          displayStevens();
+          displayStevens("Stevens Announcement");
       }
     /**
        * Print all Labels in the authorized user's inbox. If no labels
@@ -66,84 +64,195 @@
       }
 
       function displayInbox() {
-        var request = gapi.client.gmail.users.messages.list({
+        $('#inbox-button').trigger('click');
+        gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'INBOX',
-          'maxResults': 50
-        });
-
-        request.execute(function(response) {
-          $.each(response.messages, function() {
-            var messageRequest = gapi.client.gmail.users.messages.get({
+          'maxResults': 30
+        }).then(function(resp){
+            //console.log(resp);
+            console.log("gapi.client.gmail.users.messages: ");
+            console.log(gapi.client.gmail.users.messages);
+          $.each(resp.result.messages, function() {
+              //send request to gapi server for a specific message
+            gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
+            }).then(function(resp){
+             // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
+               //console.log(resp);
+               //console.log(resp.result);
+               appendMessageRowInbox(resp.result);
             });
-            messageRequest.execute(appendMessageRowInbox);
           });
         });
+          //inbox-table-unread
+           gapi.client.gmail.users.messages.list({
+          'userId': 'me',
+          'labelIds': 'UNREAD',
+          'maxResults': 5
+        }).then(function(resp){
+            console.log(resp);
+          $.each(resp.result.messages, function() {
+              //send request to gapi server for a specific message
+            gapi.client.gmail.users.messages.get({
+              'userId': 'me',
+              'id': this.id
+            }).then(function(resp){
+               console.log('resp: ', resp);  
+               appendMessageRowInbox(resp.result,'#inbox-table-unread');
+            });
+          });
+        });
+          //inbox-table-delete
+          
       }
     function displayPersonal() {
         var request = gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'CATEGORY_PERSONAL',
-          'maxResults': 50
+          'maxResults': 5
         });
-
         request.execute(function(response) {
           $.each(response.messages, function() {
-            var messageRequest = gapi.client.gmail.users.messages.get({
+            gapi.client.gmail.users.messages.get({
               'userId': 'me',
               'id': this.id
+            }).then(function(resp){
+                appendMessageRowPersonal(resp.result);
             });
-            messageRequest.execute(appendMessageRowPersonal);
           });
         });
       }
-      function appendMessageRowInbox(message) {  // add email in home page
-        appendHeaderToBody(message,'#inbox-table');
-        console.log("append new message body to html.body!");
-        appendModalToBody(message);
-            
-        $('#message-link-'+message.id).on('click', function(){
-          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+    function displayStevens(query_input){
+        if(query_input===undefined)
+        query_input="Google";
+        console.log("display stevens function works!");
+        listMessages("me",query_input,function(result){
+         $.each(result, function() { 
+            gapi.client.gmail.users.messages.get({
+              'userId': 'me',    
+              'id': this.id     
+            }).then(function(resp){
+                //console.log(resp.status);
+                appendMessageRowStevens(resp.result);
+            });
+            });
+          });
+        }
+ function listDelete(query_input='older_than:1m'){
+
+        $("#inbox-table-delete").empty();     
+        //$('#pop_up_modal').empty();         
+        listMessages("me",query_input,function(result){
+         $.each(result, function() { 
+            gapi.client.gmail.users.messages.get({
+              'userId': 'me',    
+              'id': this.id     
+            }).then(function(resp){
+                //console.log(resp);
+                appendMessageRowInbox(resp.result,'#inbox-table-delete');
+            });
+            //messageRequest.execute(appendMessageRowQuery(message));
+          });
+        })};
+   function listQuery(query_input){
+        $("#query_tbody").empty();      // query modal for list header information
+        $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
+        listMessages("me",query_input,function(result){
+         $.each(result, function() { 
+            gapi.client.gmail.users.messages.get({
+              'userId': 'me',    
+              'id': this.id     
+            }).then(function(resp){
+                //console.log(resp);
+                appendMessageRowQuery(resp.result);
+            });
+            //messageRequest.execute(appendMessageRowQuery(message));
+          });
+        })};
+/*the messages array as a result will be in callback function body*/
+function listMessages(userId, query, callback) {
+  var getPageOfMessages = function(request, result) {
+    request.execute(function(resp) {
+      result = result.concat(resp.messages);
+      var nextPageToken = resp.nextPageToken;
+       console.log("pageToken: "+nextPageToken);
+      if (nextPageToken) {
+        request = gapi.client.gmail.users.messages.list({
+          'userId': userId,
+          'pageToken': nextPageToken,
+          'q': query
         });
+        getPageOfMessages(request, result);
+      } else {
+        callback(result);
       }
+    });
+  };
+  var initialRequest = gapi.client.gmail.users.messages.list({
+    'userId': userId,
+    'q': query
+  });
+  getPageOfMessages(initialRequest, []);
+};
+
+ function appendMessageRowInbox(message,target_tab_table) {  // add email in home page //????
+        if(target_tab_table===undefined) target_tab_table='#inbox-table';
+       // console.log(message);
+        appendHeaderToBody(message,target_tab_table);
+        //console.log("append header row in inbox html.body!");
+        appendModalToBody(message);
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm =  $('#message-iframe-'+message.id)[0].contentDocument || $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $(ifrm).contents().find('body').html(getBody(message.payload));
+          //$('body', ifrm).html(getBody(message.payload)); 
+          console.log("message: ",message);
+          var temp=getBody(message.payload);
+            console.log("getbody: ",temp);
+            console.log("end body");
+            $.each(message.payload.headers,function(){
+                console.log(this.name);
+            });
+            //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm         content using html content.
+        });
+         $('#message-link-'+message.id).mouseenter(function(){
+                //$('#message-tr-'+message.id).addClass('bg-success');
+                $('#right-side-col').empty();
+                $('#right-side-col').append(getBody(message.payload));
+         });
+        
+      }
+
 function appendMessageRowPersonal(message) {  // add email in home page
         appendHeaderToBody(message,'#personal-table');
         console.log("append personal modal to html.body");
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+          $('body', ifrm).html(getBody(message.payload)); 
             console.log("messges link clicked!")
         });
+        $('#message-link-'+message.id).mouseenter(function(){
+                //$('#message-tr-'+message.id).addClass('bg-success');
+                $('#right-side-col').empty();
+                $('#right-side-col').append(getBody(message.payload));
+         });
       }
-    function displayStevens(query_input){
-        query_input="Stevens Announcement";
-        listMessages("me",query_input,function(result){
-        /*
-        for(var i=0;i<result.length;++i){
-          console.log(result[i].id);
-        }
-        */
-         $.each(result, function() { 
-            var messageRequest = gapi.client.gmail.users.messages.get({
-              'userId': 'me',    
-              'id': this.id     
-            });
-            messageRequest.execute(appendMessageRowStevens);
-          });
-        })};
  function appendMessageRowStevens(message){
         appendHeaderToBody(message,'#stevens-table');
-        console.log("append stevens modal to html.body");
+        //console.log("append stevens modal to html.body");
         appendModalToBody(message,'#stevens-modal');
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
-          $('body', ifrm).html(getBody(message.payload)); //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm content using html content.
+          $('body', ifrm).html(getBody(message.payload)); 
             console.log("messges link clicked!")
         });
+         $('#message-link-'+message.id).mouseenter(function(){
+                //$('#message-tr-'+message.id).addClass('bg-success');
+                $('#right-side-col').empty();
+                $('#right-side-col').append(getBody(message.payload));
+         });
  }
  function appendMessageRowQuery(message) {  
          //add table to query_modal
@@ -158,8 +267,41 @@ function appendMessageRowPersonal(message) {  // add email in home page
 
     function appendHeaderToBody(message,target){
         if(target===undefined) target='#inbox-table';
+        //console.log(message);
+        //console.log(message);
+        var time= new Date(getHeader(message.payload.headers, 'Date'));
+        var prettyTime= $.format.prettyDate(time);
+        if(prettyTime==="more than 5 weeks ago"){
+            prettyTime=$.format.date(time, "ddd, dd/MMM/yyyy");
+        }else{
+            prettyTime=prettyTime+$.format.date(time, " (ddd)");
+        }
+        if(message.labelIds.indexOf('UNREAD')!=-1){
         $(target).append(
-          '<tr>\
+          '<tr id="message-tr-' + message.id+'">\
+            <td>\
+                <div class="checkbox">\
+                    <label><input type="checkbox" value="#check-'+ message.id +'"></label>\
+                </div>\
+            </td>\
+            <td>'+'<strong>'+getHeader(message.payload.headers, 'From')+'</strong>'+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+               '<strong>'+getHeader(message.payload.headers, 'Subject') +'</strong>'+
+              '</a>\
+            </td>\
+            <td>'+prettyTime+'</td>\
+          </tr>'
+        );
+        }else{
+           $(target).append(
+          '<tr id="message-tr-' + message.id+'">\
+            <td>\
+                <div class="checkbox">\
+                    <label><input type="checkbox" value="#check-'+ message.id +'"></label>\
+                </div>\
+            </td>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
             <td>\
               <a href="#message-modal-' + message.id +
@@ -167,15 +309,16 @@ function appendMessageRowPersonal(message) {  // add email in home page
                 getHeader(message.payload.headers, 'Subject') +
               '</a>\
             </td>\
-            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+            <td>'+prettyTime+'</td>\
           </tr>'
-        );
+        ); 
+        }
     }
-
+    
     function appendModalToBody(message,target){
         
     if(target===undefined) target="body";
-    if(target==='#stevens-modal') console.log("stevens works");   
+    //if(target==='#stevens-modal') console.log("stevens works");   
     $(target).append(      //add modal to index.html body
           '<div class="modal fade" id="message-modal-' + message.id +
               '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
@@ -222,6 +365,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           encodedBody = getHTMLPart(message.parts);
         }
         encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+        //console.log("encodeBody: ",encodedBody);
         return decodeURIComponent(escape(window.atob(encodedBody)));
       }
 
@@ -243,48 +387,6 @@ function appendMessageRowPersonal(message) {  // add email in home page
         return '';
       }
 
-function listMessages(userId, query, callback) {
-  var getPageOfMessages = function(request, result) {
-    request.execute(function(resp) {
-      result = result.concat(resp.messages);
-      var nextPageToken = resp.nextPageToken;
-       console.log("pageToken: "+nextPageToken);
-      if (nextPageToken) {
-        request = gapi.client.gmail.users.messages.list({
-          'userId': userId,
-          'pageToken': nextPageToken,
-          'q': query
-        });
-        getPageOfMessages(request, result);
-      } else {
-        callback(result);
-      }
-    });
-  };
-  var initialRequest = gapi.client.gmail.users.messages.list({
-    'userId': userId,
-    'q': query
-  });
-  getPageOfMessages(initialRequest, []);
-};
-   
-    function listQuery(query_input){
-        $("#query_tbody").empty();      // query modal for list header information
-        $('#pop_up_modal').empty();            // query modal for display content //care!! add this could decrease memory
-        listMessages("me",query_input,function(result){
-        for(var i=0;i<result.length;++i){
-          console.log(result[i].id);
-        }
-         $.each(result, function() { //对于每一个message遍历
-            var messageRequest = gapi.client.gmail.users.messages.get({
-              'userId': 'me',    //userId 可以用邮箱
-              'id': this.id     // this 指的每一个message，它都有一个id属性
-            });
-            messageRequest.execute(appendMessageRowQuery);
-          });
-        })};
-        //listMessages("me","wix",function(){console.log("hehe")})
-
       function handleAuthResult(authResult) {
         if(authResult && !authResult.error) {
           loadGmailApi();                               //email page
@@ -293,24 +395,25 @@ function listMessages(userId, query, callback) {
           $('#inbox').removeClass("hidden");
           $('#signout-button').on('click', function(){
             handleSignOut();
-          });
+          });   
           $('#nav_search').removeClass("hidden");
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
           $('#menu-toggle').removeClass('hidden');
-          $('#footer').empty();
+          $('#right-side-toggle').removeClass('hidden');
+          $('#footer').remove();
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
               if(query_input=='') {
                 alert("Enter Some Text In Input Field");
                 }else{
-                //alert(query_input);
                 $("#query_modal").modal();
                 listQuery(query_input);
                 };
           });
           $('#inbox-button').addClass("sidebar-active");
           $('#inbox-button').on('click',function(){
+              
               $('#mailcontent .emails').addClass('hidden');
               $('#inbox').removeClass('hidden');
               $('.sidebar-nav a').removeClass("sidebar-active");
@@ -330,7 +433,23 @@ function listMessages(userId, query, callback) {
               $('.sidebar-nav a').removeClass("sidebar-active");
               $('#stevens-button').addClass("sidebar-active");
                console.log("stevens-button click!")
-          });  
+          }); 
+            $('#right-side-toggle').on('click',function(){
+                $('#right-side-col').toggleClass('hidden');
+            });
+            $('#delete-button').on('click',function(){
+               //console.log($('#time option:selected'));
+               //console.log($('#time').index());
+               var res=$('#time option:selected').index();
+               if(res===0){
+                   listDelete('older_than:1m');
+               }else if(res===1){
+                   listDelete('older_than:3m');
+               }else if(res===2){
+                   listDelete('older_than:6m');
+               };
+            });   
+           // $('#time').change(function(){console.log($('#time option:selected').val());} );
         } else {
           $('#mailcontent .emails').addClass('hidden');
           $('#menu-toggle').addClass('hidden');
