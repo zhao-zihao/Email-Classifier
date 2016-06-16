@@ -1,19 +1,20 @@
 <!doctype html>
 <html>
   <head>
-    <title>Gmail API demo</title>
+    <title>email classifier(stevens institute of technology)</title>
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./styles/simple-sidebar.css">
     <link rel="stylesheet" type="text/css" href="./styles/mystyle.css">
   </head>
   <body>
       
-    <div id="welcome" class="hidden"></div> 
     <div id="header"></div> <!--header --> 
-    <div id="wrapper">
+    <div id="welcome" class="hidden"></div> 
+    <div id="wrapper" class="">
       <!-- Sidebar -->
         <div id="sidebar-wrapper" class="hidden">
             <ul class="sidebar-nav">
@@ -23,25 +24,25 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">Inbox</a>
+                    <a id="inbox-button"  href="#">Inbox</a>
                 </li>
                 <li>
-                    <a href="#">Social</a>
+                    <a id="personal-button"  href="#">Personal</a>
                 </li>
                 <li>
-                    <a href="#">Promotion</a>
+                    <a  href="#">Promotion</a>
                 </li>
                 <li>
-                    <a href="#">Stevens</a>
+                    <a  id="stevens-button" href="#">Stevens</a>
                 </li>
                 <li>
-                    <a href="#">About</a>
+                    <a  id="about-button" href="views/aboutus.html">About</a>
                 </li>
                 <li>
-                    <a href="#">Services</a>
+                    <a  id="services-button" ref="#">Services</a>
                 </li>
                 <li>
-                    <a href="#">Contact</a>
+                    <a  id="contact-button" href="views/contact.html">Contact</a>
                 </li>
             </ul>
         </div>
@@ -49,24 +50,77 @@
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
-            <div class="container-fluid">
+            <div id="mailPage"class="container-fluid hidden">
+                <div id='mailcontent' class="row">
+                    <div class="col-md-8">
+                        <div class="row"> 
+                            <div class="col-sm-12">
+                                <div class='row'> 
+                                <div class="col-xs-10">
+                                <div class="btn-group">
+                                <button type="button" class="btn btn-inverse" id="menu-toggle">
+                                    <span class="glyphicon glyphicon-th-list"></span></button>
+                                    
+                                <button type="button" class="btn btn-info my-button" data-toggle="collapse" data-target="#search-option">search option <span class="caret"></span></button>
+                                    
+                                <button type="button" id="delete-button" class="btn btn-success my-button"><i class="glyphicon glyphicon-search"></i></button>
+                                </div> 
+                                  <div id="search-option" class="collapse">
+                                    <form class="form-inline" role="form">
+                                      <div class="form-group my-button">
+                                        <label for="keyword">key word: </label>
+                                        <input type="text" class="form-control" id="keyword">
+                                      </div>
+                                      <div class="form-group my-button">
+                                        <label for="time">time: </label>
+                                        <select id='time' class="form-control">
+                                          <option>older than 1 month</option>
+                                          <option>older than 3 month</option>
+                                          <option>older than 6 month</option>
+                                        </select>
+                                      </div>
+                                      <div class="form-group my-button">
+                                        <label for="tab-inbox">tab: </label>
+                                        <select id='tab-inbox' class="form-control">
+                                          <option>ALL</option>
+                                          <option>Unread</option>
+                                          <option>Read</option>
+                                          <option>Delete</option>
+                                        </select>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="querymodal"></div>
+                        <div class='emails' id="inbox" class="hidden"></div>
+                        <div class='emails' id="personal" class="hidden"></div>
+                        <div class='emails' id="stevens" class="hidden"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <button  class="btn btn-inverse hidden" id="right-side-toggle" role="button">
+                          toggle preview</button>
+                        <div id="right-side-col">
+                            
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
-                    <div class="col-lg-12">                    
-                              <a href="#menu-toggle" class="btn btn-default hidden" id="menu-toggle" ><span class="glyphicon glyphicon-th-list"></span>Menu</a>   
-                              <div id="querymodal"></div> 
-                              <div id="inbox"></div> 
+                    <div class="col-md-12">
+                        
                     </div>
                 </div>
             </div>
         </div>
         <!-- /#page-content-wrapper -->
     </div><!-- /#wrapper -->
-    <div id="footer"></div> <!--footer -->
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../bower_components/jquery-dateFormat/dist/jquery-dateFormat.min.js"></script>
     <script src="./scripts/app.js"></script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="./scripts/loadviews.js"></script>
   </body>
 </html>

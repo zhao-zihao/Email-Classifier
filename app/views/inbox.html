@@ -1,11 +1,102 @@
-                      
-<table  class="table table-striped table-hover table-responsive table-inbox hidden">
-                            <thead> <!--table head -->
-                                <tr>    
-                                    <th>From</th>
-                                    <th>Subject</th>
-                                    <th>Date/Time</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>  <!--table body <td></td> table data--> 
-                        </table>
+<ul class="nav nav-tabs nav-justified">
+  <li class="active">
+    <a data-toggle="tab" href="#all-inbox">ALL</a></li>
+  <li>
+    <a data-toggle="tab" href="#unread-inbox">Unread</a></li>
+  <li>
+    <a data-toggle="tab" href="#read-inbox">Read</a></li>
+  <li>
+    <a data-toggle="tab" href="#delete-inbox">Delete</a></li>
+</ul>
+<div class="tab-content">
+  <div id="all-inbox" class="tab-pane fade in active">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">
+          <div class="dropdown">
+             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a id='inbox-select-all-all' href="#">ALL</a></li>
+                  <li><a id='inbox-select-all-none' href="#">NONE</a></li>
+                </ul>
+              </div>
+          </th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th>
+        </tr>
+      </thead>
+      <tbody id="inbox-table"></tbody>
+     </table>
+  </div>
+  <div id="unread-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">
+          <div class="dropdown">
+             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a id='inbox-select-unread-all' href="#">ALL</a></li>
+                  <li><a id='inbox-select-unread-none' href="#">NONE</a></li>
+                </ul>
+              </div>
+          </th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th></tr>
+      </thead>
+      <tbody id="inbox-table-unread"></tbody>
+     </table>
+  </div>
+  <div id="read-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">
+          <div class="dropdown">
+             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a id='inbox-select-read-all' href="#">ALL</a></li>
+                  <li><a id='inbox-select-read-none' href="#">NONE</a></li>
+                </ul>
+              </div>
+          </th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th></tr>
+      </thead>
+      <tbody id="inbox-table-read"></tbody>
+     </table>
+  </div>
+  <div id="delete-inbox" class="tab-pane fade">
+    <table class="row table table-striped table-hover table-responsive">
+      <thead>
+        <!--table head -->
+        <tr>
+          <th class="col-md-1">
+          <div class="dropdown">
+             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a id='inbox-select-delete-all' href="#">ALL</a></li>
+                  <li><a id='inbox-select-delete-none' href="#">NONE</a></li>
+                </ul>
+              </div>
+          </th>
+          <th class="col-md-2">From</th>
+          <th class="col-md-7">Subject</th>
+          <th class="col-md-2">Date/Time</th>
+        </tr>
+      </thead>
+      <tbody id="inbox-table-delete"></tbody>
+     </table>
+  </div>
+</div>

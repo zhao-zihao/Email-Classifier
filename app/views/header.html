@@ -14,8 +14,8 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="index.html">home<span class="sr-only">(current)</span></a></li>
-        <li><a href="#">link(blank)</a></li>
+        <li class="active"><a href="index.html"><i class="fa fa-home fa-lg" aria-hidden="true"></i> home<span class="sr-only">(current home)</span></a></li>
+        <!-- <li><a href="#">link(blank)</a></li> -->
         <form id="nav_search"class="navbar-form navbar-left hidden" role="search">
         <div class="form-group">
           <input id="query_input" type="text" value="" class="form-control" placeholder="Search">
@@ -25,7 +25,7 @@
       </ul>
         
       <ul class="nav navbar-nav navbar-right">
-        <li><a id="aboutus" href="views/aboutus.html">about us</a></li>
+        <li><a id="aboutus" href="views/aboutus.html"><i class="fa fa-users" aria-hidden="true"></i> about us</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Setting <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -37,7 +37,9 @@
                 title="This will sign out your gmail account for your browser!">Sign Out</button>
           </ul>
         </li>
-        <button href="#" id="authorize-button" class="btn btn-primary navbar-btn pull-right hidden">Sign In with gmail</button>
+        <li>
+        <button href="#" id="authorize-button" class="btn btn-primary navbar-btn"><span class="glyphicon glyphicon-log-in"></span> Sign In with gmail</button>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

@@ -21,9 +21,9 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.2.29",
-    "jquery-legacy": "jquery#1.11",
     "bootstrap": "^3.3.6",
-    "angular-route": "^1.5.6"
+    "moment": "^2.13.0",
+    "jquery-dateFormat": "^1.0.2",
+    "font-awesome": "^4.6.3"
   }
 }
