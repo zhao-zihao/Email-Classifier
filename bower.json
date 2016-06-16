@@ -23,6 +23,7 @@
   "dependencies": {
     "bootstrap": "^3.3.6",
     "moment": "^2.13.0",
-    "jquery-dateFormat": "^1.0.2"
+    "jquery-dateFormat": "^1.0.2",
+    "font-awesome": "^4.6.3"
   }
 }

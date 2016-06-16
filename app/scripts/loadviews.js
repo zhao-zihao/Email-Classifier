@@ -3,7 +3,6 @@ $(document).ready(function(){
   $("#header").load("views/header.html"); 
   //$("#footer").load("views/footer.html");
   $('#welcome').load('views/welcome.html');
-  
   $('#inbox').load('views/inbox.html');
   $('#personal').load('views/personal.html'); 
   $('#stevens').load('views/stevens.html');
@@ -14,5 +13,5 @@ $(document).ready(function(){
             console.log("toggled wraper");
         }) // from remove to add OR from add to remove this toggled class
   });
-   
+  // console.log($('#welcome-footer'));
 });

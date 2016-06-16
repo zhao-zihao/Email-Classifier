@@ -1,4 +1,4 @@
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs nav-justified">
   <li class="active">
     <a data-toggle="tab" href="#all-inbox">ALL</a></li>
   <li>
@@ -14,7 +14,16 @@
       <thead>
         <!--table head -->
         <tr>
-          <th class="col-md-1">Check</th>
+          <th class="col-md-1">
+          <div class="dropdown">
+             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">ALL</a></li>
+                  <li><a href="#">NONE</a></li>
+                </ul>
+              </div>
+          </th>
           <th class="col-md-2">From</th>
           <th class="col-md-7">Subject</th>
           <th class="col-md-2">Date/Time</th>
@@ -46,7 +55,7 @@
           <th class="col-md-7">Subject</th>
           <th class="col-md-2">Date/Time</th></tr>
       </thead>
-      <tbody id=""></tbody>
+      <tbody id="inbox-table-read"></tbody>
      </table>
   </div>
   <div id="delete-inbox" class="tab-pane fade">

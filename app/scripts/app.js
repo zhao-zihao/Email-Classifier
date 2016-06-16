@@ -71,8 +71,8 @@
           'maxResults': 30
         }).then(function(resp){
             //console.log(resp);
-            console.log("gapi.client.gmail.users.messages: ");
-            console.log(gapi.client.gmail.users.messages);
+            //console.log("gapi.client.gmail.users.messages: ");
+            //console.log(gapi.client.gmail.users.messages);
           $.each(resp.result.messages, function() {
               //send request to gapi server for a specific message
             gapi.client.gmail.users.messages.get({
@@ -83,29 +83,16 @@
                //console.log(resp);
                //console.log(resp.result);
                appendMessageRowInbox(resp.result);
+               if(resp.result.labelIds.indexOf('UNREAD')===-1){
+                    //inbox-table-unread
+                    appendMessageRowInbox(resp.result,'#inbox-table-read');
+               }else{
+                    //inbox-table-delete
+                   appendMessageRowInbox(resp.result,'#inbox-table-unread');
+               }
             });
           });
-        });
-          //inbox-table-unread
-           gapi.client.gmail.users.messages.list({
-          'userId': 'me',
-          'labelIds': 'UNREAD',
-          'maxResults': 20
-        }).then(function(resp){
-            console.log(resp);
-          $.each(resp.result.messages, function() {
-              //send request to gapi server for a specific message
-            gapi.client.gmail.users.messages.get({
-              'userId': 'me',
-              'id': this.id
-            }).then(function(resp){
-               console.log('resp: ', resp);  
-               appendMessageRowInbox(resp.result,'#inbox-table-unread');
-            });
-          });
-        });
-          //inbox-table-delete
-          
+        }); 
       }
     function displayPersonal() {
         var request = gapi.client.gmail.users.messages.list({
@@ -140,9 +127,9 @@
             });
           });
         }
- function listDelete(query_input='older_than:1m'){
-
-        $("#inbox-table-delete").empty();     
+ function listDelete(tab='#inbox-table',query_input='older_than:1m'){
+                      
+        $(tab).empty();     
         //$('#pop_up_modal').empty();         
         listMessages("me",query_input,function(result){
          $.each(result, function() { 
@@ -151,7 +138,7 @@
               'id': this.id     
             }).then(function(resp){
                 //console.log(resp);
-                appendMessageRowInbox(resp.result,'#inbox-table-delete');
+                appendMessageRowInbox(resp.result,tab);
             });
             //messageRequest.execute(appendMessageRowQuery(message));
           });
@@ -440,14 +427,28 @@ function appendMessageRowPersonal(message) {  // add email in home page
             $('#delete-button').on('click',function(){
                //console.log($('#time option:selected'));
                //console.log($('#time').index());
-               var res=$('#time option:selected').index();
-               if(res===0){
-                   listDelete('older_than:1m');
-               }else if(res===1){
-                   listDelete('older_than:3m');
-               }else if(res===2){
-                   listDelete('older_than:6m');
+               var time=$('#time option:selected').index();
+               var tab=$('#tab-inbox option:selected').index();
+               if(time===0){
+                   time='older_than:1m';
+               }else if(time===1){
+                   time='older_than:3m';
+               }else if(time===2){
+                   time='older_than:6m';
                };
+               if(tab===0){
+                   tab='#inbox-table';
+               }else if(tab===1){
+                   tab="#inbox-table-unread";
+               }else if(tab===2){
+                   tab="#inbox-table-read";
+               }else if(tab===3){
+                   tab="#inbox-table-delete";
+               }
+               console.log(typeof time);
+               if(typeof time!==Number&& typeof tab!==Number){
+                 listDelete(tab,time);   
+               }
             }); 
             $('#mailPage').removeClass('hidden');
            // $('#time').change(function(){console.log($('#time option:selected').val());} );

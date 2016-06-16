@@ -9,14 +9,20 @@ body {
 }
 footer {
   position: relative;
-  margin-top: 20px;
- 
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 60px;
   background-color: #f5f5f5;
   padding-top: 20px;
+  padding-bottom: 20px;
 } 
+#welcome-footer{
+  height: 80px;
+}
+#special-footer{
+    height: 10px;
+    width: auto;
+    overflow: visible;
+}
 iframe {
         width: 100%;
         border: 0;
@@ -82,14 +88,20 @@ iframe {
     margin-top: -19px;
     background-color: #1abc9c; /* Green */
     color: #ffffff;
+    overflow: hidden;
 }
 .bg-2 { 
     position: relative;
     background-color: dodgerblue; /* Green */
     color: #ffffff;
+    overflow: hidden;
 }
 .bg-3 {  
     position: relative;
     background-color: darkslategray; /* Green */
     color: #ffffff;
+    overflow: hidden;
+}
+#right-side-col{
+    overflow: scroll;
 }
