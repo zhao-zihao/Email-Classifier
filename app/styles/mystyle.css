@@ -102,6 +102,22 @@ iframe {
     color: #ffffff;
     overflow: hidden;
 }
+.bg-4 {  
+    position: relative;
+    background-color: black; /* Green */
+    color: #ffffff;
+    overflow: hidden;
+}
 #right-side-col{
     overflow: scroll;
+}
+#about-us-header{
+    position: relative;
+    top:-51px;
+}
+#about-middle-break{
+    position: relative;
+    top: -51px;
+    padding: 10px;
+    margin-bottom: -51px;
 }

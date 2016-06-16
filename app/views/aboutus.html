@@ -4,8 +4,9 @@
     <title>About us</title>
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="../styles/mystyle.css">
      <style>
       #home-us{
         position: relative;
@@ -14,22 +15,27 @@
      </style>
   </head>
   <body>
-       
-    <div class="container">
+    <div id="about-us-header" class="container-fluid bg-1 text-center">
         <!-- Introduction Row -->
         <div class="row">
             <div class="col-lg-12">
-                <a id="home-us" href="../index.html" class="btn btn-default"><span class="glyphicon glyphicon-home"> home</a>
+                <a id="home-us" href="../index.html" class="btn btn-success pull-left"><span class="glyphicon glyphicon-home"> home</a>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">About Us
-                    <small>It's Nice to Meet You!</small>
+                    <small style="color: #ffffff">It's Nice to Meet You!</small>
                 </h1>
-                <p>2016 summer Email project based on gmail API</p>
+                <p class="margin">2016 summer Email project based on gmail API</p>
             </div>
         </div>
+    </div>
+    <div id="about-middle-break"class="container-fluid bg-4 text-center">
+        ...
+    </div>
+    <div class="container-fluid bg-2 text-center">
+    <div class="container">
         <!-- Team Members Row -->
         <div class="row">
             <div class="col-sm-12">
@@ -54,15 +60,17 @@
                 <h3>TIANXIAO YANG
                     <small>gmail api</small>
                 </h3>
-                <p>...</p>
+                <p class="margin">...</p>
             </div>
         </div>
     </div>
-    <div id='footer'></div>
+    </div>
+    <div id="special-footer">
+    <footer id="welcome-footer">
+        <p class="text-muted text-center">email classifier Copyright (c) 2016 (Stevens Institute of Technology)</p>
+    </footer>
+    </div>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script>
-        $("#footer").load("footer.html");  
-    </script>
   </body>
 </html>
