@@ -7,9 +7,10 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
-.footer {
-  position: absolute;
-  bottom: 0;
+footer {
+  position: relative;
+  margin-top: 20px;
+ 
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
@@ -68,3 +69,27 @@ iframe {
 .selected {
     color: blue;
   }
+.welcome-image {
+    height: 280px;
+    width: auto;
+    overflow: hidden;
+}
+.margin {
+    margin-bottom: 45px;
+}
+.bg-1 { 
+    position: relative;
+    margin-top: -19px;
+    background-color: #1abc9c; /* Green */
+    color: #ffffff;
+}
+.bg-2 { 
+    position: relative;
+    background-color: dodgerblue; /* Green */
+    color: #ffffff;
+}
+.bg-3 {  
+    position: relative;
+    background-color: darkslategray; /* Green */
+    color: #ffffff;
+}
