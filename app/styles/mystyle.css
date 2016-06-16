@@ -121,3 +121,29 @@ iframe {
     padding: 10px;
     margin-bottom: -51px;
 }
+#search-option{
+    padding: 10px;
+}
+
+/* my .btn-inverse button */
+.btn-inverse{
+    background-color: black;
+    color: #ffffff;
+}
+.btn-inverse:hover, .btn-inverse:focus:hover,.btn-inverse:active:hover, .open > .dropdown-toggle.btn-inverse {
+    background: black;
+    color: #ffffff;
+}
+.btn-inverse:focus, .btn-inverse:active:focus, .btn-inverse.active:focus {
+    outline: 0 none;
+    background: black;
+    color: #ffffff;
+    box-shadow: none;
+}
+.btn-inverse:active, .btn-inverse.active {
+    background: #eeeeee;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+

@@ -65,6 +65,10 @@
 
       function displayInbox() {
         $('#inbox-button').trigger('click');
+        var message_ids=[];
+        var message_ids_unread=[];
+        var message_ids_read=[];
+        var message_ids_dlete=[];
         gapi.client.gmail.users.messages.list({
           'userId': 'me',
           'labelIds': 'INBOX',
@@ -82,17 +86,36 @@
              // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
                //console.log(resp);
                //console.log(resp.result);
-               appendMessageRowInbox(resp.result);
+               appendMessageRowInbox(resp.result,'#inbox-table','inbox-all');
+               message_ids.push(resp.result.id);
                if(resp.result.labelIds.indexOf('UNREAD')===-1){
-                    //inbox-table-unread
-                    appendMessageRowInbox(resp.result,'#inbox-table-read');
+                    //inbox-table-read
+                    message_ids_read.push(resp.result.id);
+                    appendMessageRowInbox(resp.result,'#inbox-table-read','inbox-read');
                }else{
-                    //inbox-table-delete
-                   appendMessageRowInbox(resp.result,'#inbox-table-unread');
+                    //inbox-table-unread
+                   message_ids_unread.push(resp.result.id);       
+                   appendMessageRowInbox(resp.result,'#inbox-table-unread','inbox-unread');
                }
             });
           });
-        }); 
+        }); // end gapi
+        //#inbox-select function
+        function select_function(diff_box,selector_all,selector_none,id_array=[]){
+            $(selector_all).on('click',function(){
+             $.each(id_array,function(){
+                 $("#"+diff_box+"check-"+this).prop('checked', true);
+             });
+            });
+            $(selector_none).on('click',function(){
+                 $.each(id_array,function(){
+                     $("#"+diff_box+"check-"+this).prop('checked', false);
+                 });
+            });
+        };
+        select_function('inbox-all','#inbox-select-all-all','#inbox-select-all-none',message_ids); 
+        select_function('inbox-unread','#inbox-select-unread-all','#inbox-select-unread-none',message_ids_unread); 
+        select_function('inbox-read','#inbox-select-read-all','#inbox-select-read-none',message_ids_read); 
       }
     function displayPersonal() {
         var request = gapi.client.gmail.users.messages.list({
@@ -184,17 +207,17 @@ function listMessages(userId, query, callback) {
   getPageOfMessages(initialRequest, []);
 };
 
- function appendMessageRowInbox(message,target_tab_table) {  // add email in home page //????
+ function appendMessageRowInbox(message,target_tab_table,diff_box="") {  // add email in home page //????
         if(target_tab_table===undefined) target_tab_table='#inbox-table';
        // console.log(message);
-        appendHeaderToBody(message,target_tab_table);
+        appendHeaderToBody(message,target_tab_table,diff_box);
         //console.log("append header row in inbox html.body!");
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
           var ifrm =  $('#message-iframe-'+message.id)[0].contentDocument || $('#message-iframe-'+message.id)[0].contentWindow.document;
           $(ifrm).contents().find('body').html(getBody(message.payload));
           //$('body', ifrm).html(getBody(message.payload)); 
-          console.log("message: ",message);
+          //console.log("message: ",message);
           var temp=getBody(message.payload);
             console.log("getbody: ",temp);
             console.log("end body");
@@ -252,7 +275,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         });
       }
 
-    function appendHeaderToBody(message,target){
+    function appendHeaderToBody(message,target,diff_box=""){
         if(target===undefined) target='#inbox-table';
         //console.log(message);
         //console.log(message);
@@ -268,7 +291,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           '<tr id="message-tr-' + message.id+'">\
             <td>\
                 <div class="checkbox">\
-                    <label><input type="checkbox" value="#check-'+ message.id +'"></label>\
+                    <label><input type="checkbox" id="'+diff_box+'check-'+ message.id +'" value="'+message.id+'"></label>\
                 </div>\
             </td>\
             <td>'+'<strong>'+getHeader(message.payload.headers, 'From')+'</strong>'+'</td>\
@@ -286,7 +309,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           '<tr id="message-tr-' + message.id+'">\
             <td>\
                 <div class="checkbox">\
-                    <label><input type="checkbox" value="#check-'+ message.id +'"></label>\
+                    <label><input type="checkbox" id="'+diff_box+'check-'+ message.id +'" value="'+message.id+'"></label>\
                 </div>\
             </td>\
             <td>'+getHeader(message.payload.headers, 'From')+'</td>\
@@ -300,6 +323,8 @@ function appendMessageRowPersonal(message) {  // add email in home page
           </tr>'
         ); 
         }
+        
+        
     }
     
     function appendModalToBody(message,target){
@@ -386,7 +411,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           $('#nav_search').removeClass("hidden");
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
-          $('#menu-toggle').removeClass('hidden');
+          //$('#menu-toggle').removeClass('hidden');
           $('#right-side-toggle').removeClass('hidden');
           $('#footer').remove();
           $('#search_button').on('click',function(){
@@ -451,10 +476,11 @@ function appendMessageRowPersonal(message) {  // add email in home page
                }
             }); 
             $('#mailPage').removeClass('hidden');
+            
            // $('#time').change(function(){console.log($('#time option:selected').val());} );
         } else {
           $('#mailcontent .emails').addClass('hidden');
-          $('#menu-toggle').addClass('hidden');
+          //$('#menu-toggle').addClass('hidden');
           $('#sidebar-wrapper').addClass('hidden');
           $('#nav_search').addClass("hidden");
           $('#welcome').removeClass('hidden');
