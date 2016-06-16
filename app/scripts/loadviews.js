@@ -1,7 +1,7 @@
 $(document).ready(function(){
   console.log("document ready!");
   $("#header").load("views/header.html"); 
-  $("#footer").load("views/footer.html"); 
+  //$("#footer").load("views/footer.html");
   $('#welcome').load('views/welcome.html');
   
   $('#inbox').load('views/inbox.html');
