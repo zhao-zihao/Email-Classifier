@@ -228,8 +228,10 @@ function listMessages(userId, query, callback) {
         });
          $('#message-link-'+message.id).mouseenter(function(){
                 //$('#message-tr-'+message.id).addClass('bg-success');
+              if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
                 $('#right-side-col').append(getBody(message.payload));
+              };
          });
         
       }
@@ -245,8 +247,10 @@ function appendMessageRowPersonal(message) {  // add email in home page
         });
         $('#message-link-'+message.id).mouseenter(function(){
                 //$('#message-tr-'+message.id).addClass('bg-success');
+                if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
                 $('#right-side-col').append(getBody(message.payload));
+                };
          });
       }
  function appendMessageRowStevens(message){
@@ -260,8 +264,10 @@ function appendMessageRowPersonal(message) {  // add email in home page
         });
          $('#message-link-'+message.id).mouseenter(function(){
                 //$('#message-tr-'+message.id).addClass('bg-success');
+              if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
                 $('#right-side-col').append(getBody(message.payload));
+              };
          });
  }
  function appendMessageRowQuery(message) {  
@@ -446,8 +452,11 @@ function appendMessageRowPersonal(message) {  // add email in home page
               $('#stevens-button').addClass("sidebar-active");
                console.log("stevens-button click!")
           }); 
+            //toggle preview
             $('#right-side-toggle').on('click',function(){
+                 console.log($('#right-side-col').css('display'));
                 $('#right-side-col').fadeToggle();
+               
             });
             $('#delete-button').on('click',function(){
                //console.log($('#time option:selected'));
