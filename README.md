@@ -3,7 +3,7 @@
       
       first, you need to install npm and bower
       cd to root directory, "(sudo) bower install"
-      in root directory,<code>not app </code> use “python -m SimpleHTTPServer” to run local host
+      in root directory not app use, run “python -m SimpleHTTPServer” to run local host
       open browser at "localhost:8000" 
 
 
