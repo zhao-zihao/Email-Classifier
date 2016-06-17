@@ -1,6 +1,6 @@
 
       var clientId = '361872865320-e60c6te60kiai7ie0ppvo165doqmuc41.apps.googleusercontent.com';
-      var apiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+      //var apiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
       var scopes = 'https://www.googleapis.com/auth/gmail.readonly';
 
       function handleClientLoad() {
@@ -412,7 +412,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           $('#welcome').addClass('hidden');
           $('#sidebar-wrapper').removeClass('hidden');
           //$('#menu-toggle').removeClass('hidden');
-          $('#right-side-toggle').removeClass('hidden');
+          //$('#right-side-toggle').removeClass('hidden');
           $('#footer').remove();
           $('#search_button').on('click',function(){
               var query_input = $('#query_input').val();
@@ -447,7 +447,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
                console.log("stevens-button click!")
           }); 
             $('#right-side-toggle').on('click',function(){
-                $('#right-side-col').toggleClass('hidden');
+                $('#right-side-col').fadeToggle();
             });
             $('#delete-button').on('click',function(){
                //console.log($('#time option:selected'));
