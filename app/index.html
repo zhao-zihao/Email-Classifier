@@ -13,7 +13,9 @@
   <body>
       
     <div id="header"></div> <!--header --> 
-    <div id="welcome" class="hidden"></div> 
+
+    <div id="welcome" class="hidden"></div> <!-- welcome -->
+    
     <div id="wrapper" class="">
       <!-- Sidebar -->
         <div id="sidebar-wrapper" class="hidden">
@@ -50,47 +52,47 @@
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
-            <div id="mailPage"class="container-fluid hidden">
+            <div id="mailPage" class="container-fluid hidden">
                 <div id='mailcontent' class="row">
                     <div class="col-md-8">
                         <div class="row"> 
                             <div class="col-sm-12">
                                 <div class='row'> 
-                                <div class="col-xs-10">
-                                <div class="btn-group">
-                                <button type="button" class="btn btn-inverse" id="menu-toggle">
-                                    <span class="glyphicon glyphicon-th-list"></span></button>
-                                    
-                                <button type="button" class="btn btn-info my-button" data-toggle="collapse" data-target="#search-option">search option <span class="caret"></span></button>
-                                    
-                                <button type="button" id="delete-button" class="btn btn-success my-button"><i class="glyphicon glyphicon-search"></i></button>
-                                </div> 
-                                  <div id="search-option" class="collapse">
-                                    <form class="form-inline" role="form">
-                                      <div class="form-group my-button">
-                                        <label for="keyword">key word: </label>
-                                        <input type="text" class="form-control" id="keyword">
-                                      </div>
-                                      <div class="form-group my-button">
-                                        <label for="time">time: </label>
-                                        <select id='time' class="form-control">
-                                          <option>older than 1 month</option>
-                                          <option>older than 3 month</option>
-                                          <option>older than 6 month</option>
-                                        </select>
-                                      </div>
-                                      <div class="form-group my-button">
-                                        <label for="tab-inbox">tab: </label>
-                                        <select id='tab-inbox' class="form-control">
-                                          <option>ALL</option>
-                                          <option>Unread</option>
-                                          <option>Read</option>
-                                          <option>Delete</option>
-                                        </select>
-                                      </div>
-                                    </form>
-                                  </div>
-                                </div>
+                                    <div class="col-xs-10">
+                                        <div class="btn-group">
+                                        <button type="button" class="btn btn-inverse" id="menu-toggle">
+                                            <span class="glyphicon glyphicon-th-list"></span></button>
+                                            
+                                        <button type="button" class="btn btn-info my-button" data-toggle="collapse" data-target="#search-option">search option <span class="caret"></span></button>
+                                            
+                                        <button type="button" id="delete-button" class="btn btn-success my-button"><i class="glyphicon glyphicon-search"></i></button>
+                                        </div> 
+                                        <div id="search-option" class="collapse">
+                                            <form class="form-inline" role="form">
+                                              <div class="form-group my-button">
+                                                <label for="keyword">key word: </label>
+                                                <input type="text" class="form-control" id="keyword">
+                                              </div>
+                                              <div class="form-group my-button">
+                                                <label for="time">time: </label>
+                                                <select id='time' class="form-control">
+                                                  <option>older than 1 month</option>
+                                                  <option>older than 3 month</option>
+                                                  <option>older than 6 month</option>
+                                                </select>
+                                              </div>
+                                              <div class="form-group my-button">
+                                                <label for="tab-inbox">tab: </label>
+                                                <select id='tab-inbox' class="form-control">
+                                                  <option>ALL</option>
+                                                  <option>Unread</option>
+                                                  <option>Read</option>
+                                                  <option>Delete</option>
+                                                </select>
+                                              </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
