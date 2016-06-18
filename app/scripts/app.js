@@ -73,6 +73,7 @@ function displayInbox() {
     var message_ids = [];
     var message_ids_unread = [];
     var message_ids_read = [];
+    
     var message_ids_dlete = [];
     gapi.client.gmail.users.messages.list({
         'userId': 'me',
@@ -89,8 +90,8 @@ function displayInbox() {
                 'userId': 'me',
                 'id': this.id
             }).then(function(resp) {
-                console.log(resp);
-                // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
+                //console.log(resp);
+                //promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
                 //console.log(resp);
                 //console.log(resp.result);
                 appendMessageRowInbox(resp.result, '#inbox-table', 'inbox-all');
@@ -126,6 +127,9 @@ function displayInbox() {
 }
 
 function displayPersonal() {
+    var message_ids_personal = [];
+    var message_ids_personal_read = [];
+    var message_ids_personal_unread = [];
     var request = gapi.client.gmail.users.messages.list({
         'userId': 'me',
         'labelIds': 'CATEGORY_PERSONAL',
@@ -137,7 +141,18 @@ function displayPersonal() {
                 'userId': 'me',
                 'id': this.id
             }).then(function(resp) {
-                appendMessageRowPersonal(resp.result);
+                appendMessageRowPersonal(resp.result, '#personal-table');
+                message_ids_personal.push(resp.result.id);
+                if (resp.result.labelIds.indexOf('UNREAD') === -1) {
+                  // personal-table-read
+                  message_ids_personal_read.push(resp.result.id);
+                  appendMessageRowPersonal(resp.result, '#personal-table-read');
+                } else {
+                  console.log('personal-read-append');
+                  // personal-table-unread
+                  message_ids_personal_unread.push(resp.result.id);
+                  appendMessageRowPersonal(resp.result, '#personal-table-unread');
+                }
             });
         });
     });
@@ -247,9 +262,10 @@ function appendMessageRowInbox(message, target_tab_table, diff_box = "") { // ad
 
 }
 
-function appendMessageRowPersonal(message) { // add email in home page
-    appendHeaderToBody(message, '#personal-table');
-    console.log("append personal modal to html.body");
+function appendMessageRowPersonal(message, target_tab_table) { // add email in home page
+    if (target_tab_table === undefined) target_tab_table = '#personal-table';
+    appendHeaderToBody(message, target_tab_table);
+    //console.log("append personal modal to html.body");
     appendModalToBody(message);
     $('#message-link-' + message.id).on('click', function() {
         var ifrm = $('#message-iframe-' + message.id)[0].contentWindow.document;
@@ -338,8 +354,6 @@ function appendHeaderToBody(message, target, diff_box = "") {
           </tr>'
         );
     }
-
-
 }
 
 function appendModalToBody(message, target) {
