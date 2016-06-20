@@ -139,15 +139,16 @@
         query_input="Google";
         console.log("display stevens function works!");
         listMessages("me",query_input,function(result){
-         $.each(result, function() { 
+          console.log(result.length);
+        for(var i = 0;i < 100;i++) { 
             gapi.client.gmail.users.messages.get({
               'userId': 'me',    
-              'id': this.id     
+              'id': result[i].id,
             }).then(function(resp){
                 //console.log(resp.status);
                 appendMessageRowStevens(resp.result);
             });
-            });
+            };
           });
         }
  function listDelete(tab='#inbox-table',query_input='older_than:1m'){
@@ -187,12 +188,13 @@ function listMessages(userId, query, callback) {
     request.execute(function(resp) {
       result = result.concat(resp.messages);
       var nextPageToken = resp.nextPageToken;
-       console.log("pageToken: "+nextPageToken);
+       //console.log("pageToken: "+nextPageToken);
       if (nextPageToken) {
         request = gapi.client.gmail.users.messages.list({
           'userId': userId,
           'pageToken': nextPageToken,
-          'q': query
+          'q': query,
+          //'maxResults': 20
         });
         getPageOfMessages(request, result);
       } else {
@@ -202,14 +204,18 @@ function listMessages(userId, query, callback) {
   };
   var initialRequest = gapi.client.gmail.users.messages.list({
     'userId': userId,
-    'q': query
+    'q': query,
+    //'maxResults': 20
   });
+  /*console.log(initialRequest);
+  console.log(initialRequest.messages.length);
+  callback(initialRequest.messages);*/
+  //console.log(initialRequest);
   getPageOfMessages(initialRequest, []);
 };
 
  function appendMessageRowInbox(message,target_tab_table,diff_box="") {  // add email in home page //????
         if(target_tab_table===undefined) target_tab_table='#inbox-table';
-       // console.log(message);
         appendHeaderToBody(message,target_tab_table,diff_box);
         //console.log("append header row in inbox html.body!");
         appendModalToBody(message);
@@ -227,6 +233,7 @@ function listMessages(userId, query, callback) {
             //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm         content using html content.
         });
          $('#message-link-'+message.id).mouseenter(function(){
+              console.log('mousefunction activided');
                 //$('#message-tr-'+message.id).addClass('bg-success');
               if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
@@ -238,7 +245,7 @@ function listMessages(userId, query, callback) {
 
 function appendMessageRowPersonal(message) {  // add email in home page
         appendHeaderToBody(message,'#personal-table');
-        console.log("append personal modal to html.body");
+        //console.log("append personal modal to html.body");
         appendModalToBody(message);
         $('#message-link-'+message.id).on('click', function(){
           var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
@@ -247,13 +254,16 @@ function appendMessageRowPersonal(message) {  // add email in home page
         });
         $('#message-link-'+message.id).mouseenter(function(){
                 //$('#message-tr-'+message.id).addClass('bg-success');
-                if($('#right-side-col').css('display')!=='none'){
+              if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
                 $('#right-side-col').append(getBody(message.payload));
                 };
          });
       }
  function appendMessageRowStevens(message){
+        var DDL = getExpirationDate(message.payload);
+        console.log(DDL);
+
         appendHeaderToBody(message,'#stevens-table');
         //console.log("append stevens modal to html.body");
         appendModalToBody(message,'#stevens-modal');
@@ -263,6 +273,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
             console.log("messges link clicked!")
         });
          $('#message-link-'+message.id).mouseenter(function(){
+              console.log('function activided');
                 //$('#message-tr-'+message.id).addClass('bg-success');
               if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
@@ -270,6 +281,106 @@ function appendMessageRowPersonal(message) {  // add email in home page
               };
          });
  }
+
+ function getExpirationDate(payload){
+        console.log('---------------------------------------');
+        var monthes = ['january','february','march','april','may',
+                      'june','july','august','september','october',
+                      'november','december','sep','dec','oct','aug',
+                       'jan','feb','mar','apr','jun','jul','nov']
+                       //,'sep.','dec.','oct.','aug.',
+                      // 'jan.','feb.','mar.','apr.','jun.','jul.','nov.'];
+        var monthToNum ={
+          january: 1,          february: 2,          march: 3,
+          april: 4,          may: 5,          june: 6,
+          july: 7,          august: 8,          september: 9,
+          october: 10,          november: 11,          december: 12,
+          jan: 1,          feb: 2,          mar: 3,
+          apr: 4,          may: 5,          jun: 6,
+          jul: 7,          aug: 8,          sep: 9,
+          oct: 10,          nov: 11,          dec: 12,
+        }
+        var content_plain = (getBody_plain_text(payload));
+        //console.log(content_plain);
+        content_plain = content_plain.replace( /\n/g, ' ' ).replace( /\r\n/g, ' ' );
+        var res = content_plain.toLowerCase().split(' ');
+        var re = /\d{1,2}\/\d{1,2}\/\d*/;// '2nums/2nums/nums'
+        var re2 = /\d*/;//'nums'
+        var MaxM = '*', MaxD = '*', MaxY = '*';
+        var DMY;
+        // begin for loop
+        for (var i = 0;i < res.length;i++){
+          if(res[i].length == 0){
+            continue;
+          };
+          // to test if the string is matching my date format
+          var temp;
+          if($.inArray(res[i],monthes) != -1){
+            DMY = monthToNum[res[i]] + '/' + res[i+1].match(re2) + '/' + res[i+2].match(re2);
+            //console.log('1DATE:[' + DMY + ']');// to debug
+            var temp = DMY.split('/');// to compare with the max date
+          }else if (re.exec(res[i]) != null){
+            DMY = res[i].match(re);
+            //console.log('2DATE:[' + DMY + ']');
+            var temp = (DMY + '').split('/');
+          }else{
+            continue;
+          };
+
+          var M = temp[0], D = temp[1], Y = temp[2];
+
+          if(D != ''){// corner case e.g. mm/yyyy, mm/dd/y
+            if(D > 31){
+              if (D > 1000 && D < 3000){// assume the year is not gonna larger than 3000
+                Y = D;
+                D = 1;
+              }else{
+                //console.log('continue 1')
+                continue;
+              }
+            }else if(Y == '' || Y <= 1000 || Y > 3000){
+              Y = 2016;
+            }
+          }else{
+            //console.log('continue 2');
+            continue;
+          }
+          //console.log('M:[' + MaxM + ']' + ' D:[' + MaxD + ']' + ' Y:[' + MaxY + ']');
+          //console.log('M:[' + M + ']' + ' D:[' + D + ']' + ' Y:[' + Y + ']');
+          D = parseInt(D);
+          M = parseInt(M);
+          Y = parseInt(Y);
+          if(MaxD == '*'){// compare the date
+            MaxD = D;
+            MaxM = M;
+            MaxY = Y;
+          }else if(Y >= MaxY){
+            if(Y == MaxY){
+              if(M >= MaxM){
+                if(M == MaxM){
+                  if(D > MaxD){
+                    MaxD = D;
+                    MaxM = M;
+                    MaxY = Y;
+                  }
+                }else{
+                  MaxD = D;
+                  MaxM = M;
+                  MaxY = Y;
+                }
+              }
+            }else{
+              MaxD = D;
+              MaxM = M;
+              MaxY = Y;
+            }
+          }
+        }
+        // end for loop
+        if(MaxM != '*') return('Expiration Date:' + MaxM + '/' + MaxD + '/' + MaxY);
+        else return('Expiration Date: NONE');
+ }
+
  function appendMessageRowQuery(message) {  
          //add table to query_modal
         appendHeaderToBody(message,'#query_tbody');
@@ -400,6 +511,39 @@ function appendMessageRowPersonal(message) {  // add email in home page
           else
           {
             return getHTMLPart(arr[x].parts);
+          }
+        }
+        return '';
+      }
+
+      function getBody_plain_text(message){
+        var encodedBody = '';
+        if(typeof message.parts === 'undefined')
+        {
+          encodedBody = message.body.data;
+        }
+        else
+        {
+          encodedBody = getHTMLPart_plain_text(message.parts);
+        }
+        encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+        //console.log("encodeBody: ",encodedBody);
+        return decodeURIComponent(escape(window.atob(encodedBody)));
+      }
+
+      function getHTMLPart_plain_text(arr) {
+        for(var x = 0; x <= arr.length; x++)
+        {
+          if(typeof arr[x].parts === 'undefined')
+          {
+            if(arr[x].mimeType === 'text/plain')
+            {
+              return arr[x].body.data;
+            }
+          }
+          else
+          {
+            return getHTMLPart_plain_text(arr[x].parts);
           }
         }
         return '';
