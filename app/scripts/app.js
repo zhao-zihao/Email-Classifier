@@ -263,7 +263,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
  function appendMessageRowStevens(message){
         var DDL = getExpirationDate(message.payload);
         console.log(DDL);
-
+         
         appendHeaderToBody(message,'#stevens-table');
         //console.log("append stevens modal to html.body");
         appendModalToBody(message,'#stevens-modal');
@@ -301,11 +301,11 @@ function appendMessageRowPersonal(message) {  // add email in home page
           oct: 10,          nov: 11,          dec: 12,
         }
         var content_plain = (getBody_plain_text(payload));
-        //console.log(content_plain);
+        console.log(content_plain);
         content_plain = content_plain.replace( /\n/g, ' ' ).replace( /\r\n/g, ' ' );
         var res = content_plain.toLowerCase().split(' ');
-        var re = /\d{1,2}\/\d{1,2}\/\d*/;// '2nums/2nums/nums'
-        var re2 = /\d*/;//'nums'
+        var re = /\d{1,2}\/\d{1,2}\/\d+/;// '2nums/2nums/nums'
+        var re2 = /\d+/;//'nums'
         var MaxM = '*', MaxD = '*', MaxY = '*';
         var DMY;
         // begin for loop
@@ -318,11 +318,11 @@ function appendMessageRowPersonal(message) {  // add email in home page
           if($.inArray(res[i],monthes) != -1){
             DMY = monthToNum[res[i]] + '/' + res[i+1].match(re2) + '/' + res[i+2].match(re2);
             //console.log('1DATE:[' + DMY + ']');// to debug
-            var temp = DMY.split('/');// to compare with the max date
+            temp = DMY.split('/');// to compare with the max date
           }else if (re.exec(res[i]) != null){
             DMY = res[i].match(re);
-            //console.log('2DATE:[' + DMY + ']');
-            var temp = (DMY + '').split('/');
+            //console.log('2DATE:[' + DMY + ']');  
+            temp = (DMY + '').split('/');        
           }else{
             continue;
           };
@@ -498,7 +498,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         return decodeURIComponent(escape(window.atob(encodedBody)));
       }
 
-      function getHTMLPart(arr) {
+      function getHTMLPart(arr) { 
         for(var x = 0; x <= arr.length; x++)
         {
           if(typeof arr[x].parts === 'undefined')
@@ -524,6 +524,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         }
         else
         {
+          console.log(message.parts);
           encodedBody = getHTMLPart_plain_text(message.parts);
         }
         encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
