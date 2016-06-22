@@ -1,7 +1,9 @@
 # 2016SummerEmailClassifier
->Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao
-
-      note: use “python -m SimpleHTTPServer” to run local host
+> Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao
+      
+      first, you need to install npm and bower
+      cd to root directory, "(sudo) bower install"
+      in root directory not app use, run “python -m SimpleHTTPServer” to run local host
       open browser at "localhost:8000" 
 
 
