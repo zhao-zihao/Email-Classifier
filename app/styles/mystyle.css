@@ -2,7 +2,16 @@ body { padding-top: 70px; } /* the fixed nav bar */
 
 /* Sticky footer styles
 -------------------------------------------------- */
-
+#today {
+    float: left;
+    font-family: 'Candal', sans-serif;
+    font-size: 2em;
+    padding-left: 30px;
+    padding-top: 0px;
+}
+.markAsRed{
+    background-color: #ffb3b3 !important;
+}
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
