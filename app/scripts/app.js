@@ -136,21 +136,37 @@
       }
     function displayStevens(query_input){
         if(query_input===undefined)
-        query_input="Google";
+          query_input="Google";
         console.log("display stevens function works!");
         listMessages("me",query_input,function(result){
           console.log(result.length);
-        for(var i = 0;i < 100;i++) { 
+          // get today's date
+          var today = new Date();
+          var dd = today.getDate();
+          var mm = today.getMonth()+1; //January is 0!
+          var yyyy = today.getFullYear();
+          if(dd<10)
+           dd='0'+dd;
+          if(mm<10)
+            mm='0'+mm;
+          $('#today').append(mm+'/'+dd+'/'+yyyy);
+          var TODAY = mm+'/'+dd+'/'+yyyy;
+          // getdate end
+          var mailID_DDL = {};// store mail ddl for stevens announcement
+          var out_of_date = [];// store mails with ddl more than one month before today
+          for(var i = 0;i < 100;i++) { 
             gapi.client.gmail.users.messages.get({
               'userId': 'me',    
               'id': result[i].id,
-            }).then(function(resp){
-                //console.log(resp.status);
-                appendMessageRowStevens(resp.result);
-            });
-            };
-          });
-        }
+            }).then(
+              function(resp){
+                appendMessageRowStevens(resp.result,TODAY,mailID_DDL,out_of_date);
+              } 
+            );
+          };
+        });
+      }
+
  function listDelete(tab='#inbox-table',query_input='older_than:1m'){
                       
         $(tab).empty();     
@@ -232,7 +248,7 @@ function listMessages(userId, query, callback) {
             });
             //The html() method sets or returns the content (innerHTML) of the selected elements. in this case, sets the ifrm         content using html content.
         });
-         $('#message-link-'+message.id).mouseenter(function(){
+         $('#inbox-table #message-link-'+message.id).mouseenter(function(){
               console.log('mousefunction activided');
                 //$('#message-tr-'+message.id).addClass('bg-success');
               if($('#right-side-col').css('display')!=='none'){
@@ -260,11 +276,30 @@ function appendMessageRowPersonal(message) {  // add email in home page
                 };
          });
       }
- function appendMessageRowStevens(message){
+ function appendMessageRowStevens(message,TODAY,mailID_DDL,out_of_date){
         var DDL = getExpirationDate(message.payload);
+<<<<<<< HEAD
         console.log(DDL);
          
         appendHeaderToBody(message,'#stevens-table');
+=======
+        console.log(message.id);
+        mailID_DDL[message.id] = DDL;
+        var outFlag = compareDate(TODAY,DDL);
+        if(outFlag) out_of_date.push(message.id);// don't move this push function
+        appendHeaderToBody(message,'#stevens-table').done(
+          function(){
+            if(outFlag){
+              console.log('red');
+              $('#stevens-table #message-tr-'+message.id).addClass('markAsRed');
+            }
+          }
+        );
+        //console.log(mailID_DDL);
+        //console.log(out_of_date.length);
+        //$('.mark').addClass('markAsRed');
+        //console.log(message.id);
+>>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
         //console.log("append stevens modal to html.body");
         appendModalToBody(message,'#stevens-modal');
         $('#message-link-'+message.id).on('click', function(){
@@ -272,13 +307,29 @@ function appendMessageRowPersonal(message) {  // add email in home page
           $('body', ifrm).html(getBody(message.payload)); 
             console.log("messges link clicked!")
         });
-         $('#message-link-'+message.id).mouseenter(function(){
-              console.log('function activided');
+        var temp;
+         $('#stevens-table #message-link-'+message.id).mouseenter(function(){
+           //   console.log('function activided');
                 //$('#message-tr-'+message.id).addClass('bg-success');
               if($('#right-side-col').css('display')!=='none'){
                 $('#right-side-col').empty();
                 $('#right-side-col').append(getBody(message.payload));
               };
+              temp = $('#stevens-table #DateDDL-' + message.id).text();
+              // console.log(temp);
+              // gapi.client.gmail.users.messages.get({
+              //     'userId': 'me',
+              //     'id': message.id,
+              // }).then(
+              // function(resp) {
+                $('#stevens-table #DateDDL-' + message.id).empty();
+                $('#stevens-table #DateDDL-' + message.id).append('DDL: [' + mailID_DDL[message.id] + ']');
+              //}
+            //);
+         });
+         $('#stevens-table #message-link-'+message.id).mouseleave(function(){
+                $('#stevens-table #DateDDL-' + message.id).empty();
+                $('#stevens-table #DateDDL-' + message.id).append(temp);          
          });
  }
 
@@ -300,6 +351,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
           jul: 7,          aug: 8,          sep: 9,
           oct: 10,          nov: 11,          dec: 12,
         }
+<<<<<<< HEAD
         var content_plain = (getBody_plain_text(payload));
         console.log(content_plain);
         content_plain = content_plain.replace( /\n/g, ' ' ).replace( /\r\n/g, ' ' );
@@ -307,82 +359,121 @@ function appendMessageRowPersonal(message) {  // add email in home page
         var re = /\d{1,2}\/\d{1,2}\/\d+/;// '2nums/2nums/nums'
         var re2 = /\d+/;//'nums'
         var MaxM = '*', MaxD = '*', MaxY = '*';
+=======
+        var content_plain = (getBody(payload,true));
+        //console.log(content_plain);
+        content_plain = content_plain.replace( /\n/g, ' ' ).replace( /\r\n/g, ' ' );
+        var res = content_plain.toLowerCase().split(' ');
+        var re = /\d{1,2}\/\d{1,2}\/\d+/;// '2nums/2nums/nums'
+        var re3 = /\d{4}\/\d{1,2}\/\d{1,2}/;// '2016/6/15'
+        var re2 = /\d+/;//'nums'
+        var MaxM, MaxD, MaxY, firstDateFlag = true;
+>>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
         var DMY;
         // begin for loop
         for (var i = 0;i < res.length;i++){
-          if(res[i].length == 0){
+          if(res[i].length == 0)
             continue;
-          };
           // to test if the string is matching my date format
-          var temp;
+          var temp,M,D,Y;
           if($.inArray(res[i],monthes) != -1){
             DMY = monthToNum[res[i]] + '/' + res[i+1].match(re2) + '/' + res[i+2].match(re2);
             //console.log('1DATE:[' + DMY + ']');// to debug
             temp = DMY.split('/');// to compare with the max date
+<<<<<<< HEAD
+=======
+            M = temp[0], D = temp[1], Y = temp[2];
+          }else if (re3.exec(res[i]) != null){
+            DMY = res[i].match(re3);
+            //console.log('3DATE:[' + DMY + ']');  
+            temp = (DMY + '').split('/');        
+            Y = temp[0], M = temp[1], D = temp[2];
+>>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
           }else if (re.exec(res[i]) != null){
             DMY = res[i].match(re);
             //console.log('2DATE:[' + DMY + ']');  
             temp = (DMY + '').split('/');        
+<<<<<<< HEAD
           }else{
             continue;
           };
+=======
+            M = temp[0], D = temp[1], Y = temp[2];
+          }else continue;
+>>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
 
-          var M = temp[0], D = temp[1], Y = temp[2];
-
-          if(D != ''){// corner case e.g. mm/yyyy, mm/dd/y
-            if(D > 31){
+          D = D + '';
+          Y = Y + '';
+          if(D != 'null'){// corner case e.g. mm/yyyy, mm/dd/y
+            if(D > 31 && M < 13){
               if (D > 1000 && D < 3000){// assume the year is not gonna larger than 3000
                 Y = D;
                 D = 1;
-              }else{
-                //console.log('continue 1')
+              }else
                 continue;
-              }
-            }else if(Y == '' || Y <= 1000 || Y > 3000){
+            }else if(Y == 'null' || Y <= 1000 || Y > 3000)
               Y = 2016;
-            }
-          }else{
-            //console.log('continue 2');
+          }else
             continue;
-          }
           //console.log('M:[' + MaxM + ']' + ' D:[' + MaxD + ']' + ' Y:[' + MaxY + ']');
-          //console.log('M:[' + M + ']' + ' D:[' + D + ']' + ' Y:[' + Y + ']');
           D = parseInt(D);
           M = parseInt(M);
           Y = parseInt(Y);
-          if(MaxD == '*'){// compare the date
+          //console.log('M:[' + M + ']' + ' D:[' + D + ']' + ' Y:[' + Y + ']');
+          if(firstDateFlag){// compare the date
             MaxD = D;
             MaxM = M;
             MaxY = Y;
-          }else if(Y >= MaxY){
-            if(Y == MaxY){
-              if(M >= MaxM){
-                if(M == MaxM){
-                  if(D > MaxD){
-                    MaxD = D;
-                    MaxM = M;
-                    MaxY = Y;
-                  }
-                }else{
-                  MaxD = D;
-                  MaxM = M;
-                  MaxY = Y;
-                }
-              }
-            }else{
-              MaxD = D;
-              MaxM = M;
-              MaxY = Y;
-            }
+            firstDateFlag = false;
+          }else if(compareDate(D,M,Y,MaxD,MaxM,MaxY)){
+            MaxD = D;
+            MaxM = M;
+            MaxY = Y;
           }
         }
         // end for loop
-        if(MaxM != '*') return('Expiration Date:' + MaxM + '/' + MaxD + '/' + MaxY);
-        else return('Expiration Date: NONE');
+        if(firstDateFlag){
+          console.log('NONE');
+          return 'none';
+        }
+        console.log(MaxM + '/' + MaxD + '/' + MaxY);
+        return MaxM + '/' + MaxD + '/' + MaxY;
  }
+
+function compareDate(D,M,Y,MaxD,MaxM,MaxY){
+  if(M=='none'){
+    return false;
+  }
+    if(Y == undefined){
+      var temp1 = D.split('/');
+      var temp2 = M.split('/');
+      D = parseInt(temp1[1]); M = parseInt(temp1[0]); Y = parseInt(temp1[2]);
+      MaxD = parseInt(temp2[1]); MaxM = parseInt(temp2[0]); MaxY = parseInt(temp2[2]);
+      MaxM += 1; // out of date over one month 
+      if(MaxM > 12){
+        MaxY++;
+        MaxM = 1;
+      }
+    }
+    if(Y >= MaxY){
+      if(Y == MaxY){
+        if(M >= MaxM){
+          if(M == MaxM){
+             if(D > MaxD)
+              return true;
+          }else
+            return true;
+        }
+      }else
+        return true;
+    }
+    return false;
+}
+ 
 
  function appendMessageRowQuery(message) {  
          //add table to query_modal
+
         appendHeaderToBody(message,'#query_tbody');
         //add modal to #pop_up_modal
         appendModalToBody(message,'#pop_up_modal');
@@ -393,6 +484,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
       }
 
     function appendHeaderToBody(message,target,diff_box=""){
+        var r = $.Deferred();
         if(target===undefined) target='#inbox-table';
         //console.log(message);
         //console.log(message);
@@ -405,7 +497,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         }
         if(message.labelIds.indexOf('UNREAD')!=-1){
         $(target).append(
-          '<tr id="message-tr-' + message.id+'">\
+          '<tr id="message-tr-' + message.id+'" class="">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="'+diff_box+'check-'+ message.id +'" value="'+message.id+'"></label>\
@@ -418,12 +510,14 @@ function appendMessageRowPersonal(message) {  // add email in home page
                '<strong>'+getHeader(message.payload.headers, 'Subject') +'</strong>'+
               '</a>\
             </td>\
-            <td>'+prettyTime+'</td>\
+            <td id="DateDDL-'+ message.id +'">\
+                  '+prettyTime+'\
+            </td>\
           </tr>'
         );
         }else{
            $(target).append(
-          '<tr id="message-tr-' + message.id+'">\
+          '<tr id="message-tr-' + message.id+'" class="">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="'+diff_box+'check-'+ message.id +'" value="'+message.id+'"></label>\
@@ -436,12 +530,18 @@ function appendMessageRowPersonal(message) {  // add email in home page
                 getHeader(message.payload.headers, 'Subject') +
               '</a>\
             </td>\
-            <td>'+prettyTime+'</td>\
+            <td id="DateDDL-'+ message.id +'">\
+                  '+prettyTime+'\
+            </td>\
           </tr>'
         ); 
         }
-        
-        
+        setTimeout(function () {
+          // and call `resolve` on the deferred object, once you're done
+          r.resolve();
+        }, 2500);
+        return r;
+        //return $.Deferred().resolve();
     }
     
     function appendModalToBody(message,target){
@@ -483,7 +583,7 @@ function appendMessageRowPersonal(message) {  // add email in home page
         return header;
       }
 
-      function getBody(message) { //message = message.payload
+      function getBody(message,flag = false) { //message = message.payload
         var encodedBody = '';
         if(typeof message.parts === 'undefined')
         {
@@ -491,13 +591,14 @@ function appendMessageRowPersonal(message) {  // add email in home page
         }
         else
         {
-          encodedBody = getHTMLPart(message.parts);
+          encodedBody = getHTMLPart(message.parts,flag);
         }
         encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
         //console.log("encodeBody: ",encodedBody);
         return decodeURIComponent(escape(window.atob(encodedBody)));
       }
 
+<<<<<<< HEAD
       function getHTMLPart(arr) { 
         for(var x = 0; x <= arr.length; x++)
         {
@@ -533,18 +634,25 @@ function appendMessageRowPersonal(message) {  // add email in home page
       }
 
       function getHTMLPart_plain_text(arr) {
+=======
+      function getHTMLPart(arr,flag = false) { 
+        var type = 'text/html';
+        if(flag){
+          type = 'text/plain';
+        }
+>>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
         for(var x = 0; x <= arr.length; x++)
         {
           if(typeof arr[x].parts === 'undefined')
           {
-            if(arr[x].mimeType === 'text/plain')
+            if(arr[x].mimeType === type)
             {
               return arr[x].body.data;
             }
           }
           else
           {
-            return getHTMLPart_plain_text(arr[x].parts);
+            return getHTMLPart(arr[x].parts,flag);
           }
         }
         return '';
