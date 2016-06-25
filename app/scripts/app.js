@@ -278,11 +278,6 @@ function appendMessageRowPersonal(message) {  // add email in home page
       }
  function appendMessageRowStevens(message,TODAY,mailID_DDL,out_of_date){
         var DDL = getExpirationDate(message.payload);
-<<<<<<< HEAD
-        console.log(DDL);
-         
-        appendHeaderToBody(message,'#stevens-table');
-=======
         console.log(message.id);
         mailID_DDL[message.id] = DDL;
         var outFlag = compareDate(TODAY,DDL);
@@ -299,7 +294,6 @@ function appendMessageRowPersonal(message) {  // add email in home page
         //console.log(out_of_date.length);
         //$('.mark').addClass('markAsRed');
         //console.log(message.id);
->>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
         //console.log("append stevens modal to html.body");
         appendModalToBody(message,'#stevens-modal');
         $('#message-link-'+message.id).on('click', function(){
@@ -351,15 +345,6 @@ function appendMessageRowPersonal(message) {  // add email in home page
           jul: 7,          aug: 8,          sep: 9,
           oct: 10,          nov: 11,          dec: 12,
         }
-<<<<<<< HEAD
-        var content_plain = (getBody_plain_text(payload));
-        console.log(content_plain);
-        content_plain = content_plain.replace( /\n/g, ' ' ).replace( /\r\n/g, ' ' );
-        var res = content_plain.toLowerCase().split(' ');
-        var re = /\d{1,2}\/\d{1,2}\/\d+/;// '2nums/2nums/nums'
-        var re2 = /\d+/;//'nums'
-        var MaxM = '*', MaxD = '*', MaxY = '*';
-=======
         var content_plain = (getBody(payload,true));
         //console.log(content_plain);
         content_plain = content_plain.replace( /\n/g, ' ' ).replace( /\r\n/g, ' ' );
@@ -368,7 +353,6 @@ function appendMessageRowPersonal(message) {  // add email in home page
         var re3 = /\d{4}\/\d{1,2}\/\d{1,2}/;// '2016/6/15'
         var re2 = /\d+/;//'nums'
         var MaxM, MaxD, MaxY, firstDateFlag = true;
->>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
         var DMY;
         // begin for loop
         for (var i = 0;i < res.length;i++){
@@ -380,27 +364,18 @@ function appendMessageRowPersonal(message) {  // add email in home page
             DMY = monthToNum[res[i]] + '/' + res[i+1].match(re2) + '/' + res[i+2].match(re2);
             //console.log('1DATE:[' + DMY + ']');// to debug
             temp = DMY.split('/');// to compare with the max date
-<<<<<<< HEAD
-=======
             M = temp[0], D = temp[1], Y = temp[2];
           }else if (re3.exec(res[i]) != null){
             DMY = res[i].match(re3);
             //console.log('3DATE:[' + DMY + ']');  
             temp = (DMY + '').split('/');        
             Y = temp[0], M = temp[1], D = temp[2];
->>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
           }else if (re.exec(res[i]) != null){
             DMY = res[i].match(re);
             //console.log('2DATE:[' + DMY + ']');  
             temp = (DMY + '').split('/');        
-<<<<<<< HEAD
-          }else{
-            continue;
-          };
-=======
             M = temp[0], D = temp[1], Y = temp[2];
           }else continue;
->>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
 
           D = D + '';
           Y = Y + '';
@@ -598,49 +573,11 @@ function compareDate(D,M,Y,MaxD,MaxM,MaxY){
         return decodeURIComponent(escape(window.atob(encodedBody)));
       }
 
-<<<<<<< HEAD
-      function getHTMLPart(arr) { 
-        for(var x = 0; x <= arr.length; x++)
-        {
-          if(typeof arr[x].parts === 'undefined')
-          {
-            if(arr[x].mimeType === 'text/html')
-            {
-              return arr[x].body.data;
-            }
-          }
-          else
-          {
-            return getHTMLPart(arr[x].parts);
-          }
-        }
-        return '';
-      }
-
-      function getBody_plain_text(message){
-        var encodedBody = '';
-        if(typeof message.parts === 'undefined')
-        {
-          encodedBody = message.body.data;
-        }
-        else
-        {
-          console.log(message.parts);
-          encodedBody = getHTMLPart_plain_text(message.parts);
-        }
-        encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
-        //console.log("encodeBody: ",encodedBody);
-        return decodeURIComponent(escape(window.atob(encodedBody)));
-      }
-
-      function getHTMLPart_plain_text(arr) {
-=======
       function getHTMLPart(arr,flag = false) { 
         var type = 'text/html';
         if(flag){
           type = 'text/plain';
         }
->>>>>>> 319484567c69f1af953ec2703f1dbd5351973b48
         for(var x = 0; x <= arr.length; x++)
         {
           if(typeof arr[x].parts === 'undefined')
