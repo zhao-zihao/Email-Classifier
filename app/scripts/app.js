@@ -162,7 +162,7 @@ function displayStevens(query_input) {
         // getdate end
         var mailID_DDL = {}; // store mail ddl for stevens announcement
         var out_of_date = []; // store mails with ddl more than one month before today
-        for (var i = 0; i < 30; i++) {
+        for (var i = 0; i < 100; i++) {
             gapi.client.gmail.users.messages.get({
                 'userId': 'me',
                 'id': result[i].id,
