@@ -1,6 +1,6 @@
 var clientId = '361872865320-e60c6te60kiai7ie0ppvo165doqmuc41.apps.googleusercontent.com';
 //var apiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-var scopes = 'https://www.googleapis.com/auth/gmail.readonly';
+var scopes = 'https://mail.google.com/';
 
 function handleClientLoad() {
     //gapi.client.setApiKey(apiKey);
@@ -38,7 +38,7 @@ function loadEmails() {
     listLabels();
     displayInbox();
     displayPersonal();
-    displayStevens("Stevens Announcement");
+    displayStevens("'Stevens Announcement'");
 }
 /**
  * Print all Labels in the authorized user's inbox. If no labels
@@ -69,7 +69,7 @@ function displayInbox() {
     var message_ids = [];
     var message_ids_unread = [];
     var message_ids_read = [];
-    var message_ids_dlete = [];
+    var message_ids_delete = [];
     gapi.client.gmail.users.messages.list({
         'userId': 'me',
         'labelIds': 'INBOX',
@@ -104,6 +104,7 @@ function displayInbox() {
     //#inbox-select function
     function select_function(diff_box, selector_all, selector_none, id_array = []) {
         $(selector_all).on('click', function() {
+    		console.log(id_array.length);
             $.each(id_array, function() {
                 $("#" + diff_box + "check-" + this).prop('checked', true);
             });
@@ -138,11 +139,15 @@ function displayPersonal() {
 }
 
 function displayStevens(query_input) {
+    var message_stevens_ids = [];
+    var message_stevens_ids_unread = [];
+    var message_stevens_ids_read = [];
+    var message_stevens_ids_delete = [];
     if (query_input === undefined)
         query_input = "Google";
     console.log("display stevens function works!");
     listMessages("me", query_input, function(result) {
-        console.log(result.length);
+        //console.log(result.length);
         // get today's date
         var today = new Date();
         var dd = today.getDate();
@@ -163,11 +168,41 @@ function displayStevens(query_input) {
                 'id': result[i].id,
             }).then(
                 function(resp) {
-                    appendMessageRowStevens(resp.result, TODAY, mailID_DDL, out_of_date);
+                    appendMessageRowStevens(resp.result, TODAY, mailID_DDL, out_of_date, '#stevens-table', 'stevens-all',true);
+                    //console.log('stevens'+resp.result.id);
+                    message_stevens_ids.push(resp.result.id);
+                	if (resp.result.labelIds.indexOf('UNREAD') === -1) {
+	                    //stevens-table-read
+	                    message_stevens_ids_read.push(resp.result.id);
+                    	appendMessageRowStevens(resp.result, TODAY, mailID_DDL, out_of_date, '#stevens-table-read', 'stevens-read');
+	                } else {
+	                    //stevens-table-unread
+	                    message_stevens_ids_unread.push(resp.result.id);
+                    	appendMessageRowStevens(resp.result, TODAY, mailID_DDL, out_of_date, '#stevens-table-unread', 'stevens-unread');
+	                }
                 }
             );
         };
-    });
+        //console.log(message_stevens_ids);
+		// stevens-select function
+		function select_function(diff_box, selector_all, selector_none, id_array = []) {
+		    $(selector_all).on('click', function() {
+		    	console.log(id_array.length);
+		        $.each(id_array, function() {
+		            $("#" + diff_box + "check-" + this).prop('checked', true);
+		        });
+		    });
+		    $(selector_none).on('click', function() {
+		        $.each(id_array, function() {
+		            $("#" + diff_box + "check-" + this).prop('checked', false);
+		        });
+		    });
+		};
+		select_function('stevens-all', '#stevens-select-all-all', '#stevens-select-all-none', message_stevens_ids);
+		select_function('stevens-unread', '#stevens-select-unread-all', '#stevens-select-unread-none', message_stevens_ids_unread);
+		select_function('stevens-read', '#stevens-select-read-all', '#stevens-select-read-none', message_stevens_ids_read);
+		select_function('stevens-all', '#stevens-select-all-out', '#stevens-select-all-none', out_of_date);
+		});
 }
 
 function listDelete(tab = '#inbox-table', query_input = 'older_than:1m') {
@@ -283,55 +318,54 @@ function appendMessageRowPersonal(message) { // add email in home page
     });
 }
 
-function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date) {
-    var DDL = getExpirationDate(message.payload);
-    console.log(message.id);
-    mailID_DDL[message.id] = DDL;
-    var outFlag = compareDate(TODAY, DDL);
-    if (outFlag) out_of_date.push(message.id); // don't move this push function
-    appendHeaderToBody(message, '#stevens-table').done(
+function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target_tab_table, diff_box = "",flag=false) {
+
+    if (target_tab_table === undefined) target_tab_table = 'stevens-table';
+    //appendHeaderToBody(message, target_tab_table, diff_box);
+    if(flag){
+	    var DDL = getExpirationDate(message.payload);
+	    console.log('inside='+message.id);
+	    mailID_DDL[message.id] = DDL;
+	    var outFlag = compareDate(TODAY, DDL);
+	}
+    if (flag && outFlag) out_of_date.push(message.id); // don't move this push function
+   
+    appendHeaderToBody(message, target_tab_table ,diff_box).done(
         function() {
-            if (outFlag) {
+            if (flag && outFlag) {
                 console.log('red');
                 $('#stevens-table #message-tr-' + message.id).addClass('markAsRed');
             }
         }
     );
-    //console.log(mailID_DDL);
-    //console.log(out_of_date.length);
-    //$('.mark').addClass('markAsRed');
-    //console.log(message.id);
-    //console.log("append stevens modal to html.body");
     appendModalToBody(message, '#stevens-modal');
-    $('#message-link-' + message.id).on('click', function() {
-        var ifrm = $('#message-iframe-' + message.id)[0].contentWindow.document;
-        $('body', ifrm).html(getBody(message.payload));
-        console.log("messges link clicked!")
-    });
-    var temp;
-    $('#stevens-table #message-link-' + message.id).mouseenter(function() {
-        //   console.log('function activided');
-        //$('#message-tr-'+message.id).addClass('bg-success');
-        if ($('#right-side-col').css('display') !== 'none') {
-            $('#right-side-col').empty();
-            $('#right-side-col').append(getBody(message.payload));
-        };
-        temp = $('#stevens-table #DateDDL-' + message.id).text();
-        // console.log(temp);
-        // gapi.client.gmail.users.messages.get({
-        //     'userId': 'me',
-        //     'id': message.id,
-        // }).then(
-        // function(resp) {
-        $('#stevens-table #DateDDL-' + message.id).empty();
-        $('#stevens-table #DateDDL-' + message.id).append('DDL: [' + mailID_DDL[message.id] + ']');
-        //}
-        //);
-    });
-    $('#stevens-table #message-link-' + message.id).mouseleave(function() {
-        $('#stevens-table #DateDDL-' + message.id).empty();
-        $('#stevens-table #DateDDL-' + message.id).append(temp);
-    });
+
+    if(flag){
+    // if we don't use this flag here, the mouseenter/leave function will be activited twice
+	    $('#message-link-' + message.id).on('click', function() {
+	        var ifrm = $('#message-iframe-' + message.id)[0].contentWindow.document;
+	        $('body', ifrm).html(getBody(message.payload));
+	        console.log("messges link clicked!")
+	    });
+	
+	    var temp;
+	    $('#stevens-table #message-link-' + message.id).mouseenter(function() {
+	        if ($('#right-side-col').css('display') !== 'none') {
+	            $('#right-side-col').empty();
+	            $('#right-side-col').append(getBody(message.payload));
+	        };
+	        temp = $('#stevens-table #DateDDL-' + message.id).text();
+	        $('#stevens-table #DateDDL-' + message.id).empty();
+	        //console.log('1temp='+temp);
+	        $('#stevens-table #DateDDL-' + message.id).append('DDL: [' + mailID_DDL[message.id] + ']');
+	    });
+	    $('#stevens-table #message-link-' + message.id).mouseleave(function() {
+	        $('#stevens-table #DateDDL-' + message.id).empty();
+	        //console.log('empty');
+	        //console.log('2temp='+temp);
+	        $('#stevens-table #DateDDL-' + message.id).append(temp);
+	    });
+	}
 }
 
 function getExpirationDate(payload) {
@@ -489,8 +523,7 @@ function appendMessageRowQuery(message) {
 function appendHeaderToBody(message, target, diff_box = "") {
     var r = $.Deferred();
     if (target === undefined) target = '#inbox-table';
-    //console.log(message);
-    //console.log(message);
+
     var time = new Date(getHeader(message.payload.headers, 'Date'));
     var prettyTime = $.format.prettyDate(time);
     if (prettyTime === "more than 5 weeks ago") {
