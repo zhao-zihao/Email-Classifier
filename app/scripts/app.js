@@ -162,7 +162,7 @@ function displayStevens(query_input) {
         // getdate end
         var mailID_DDL = {}; // store mail ddl for stevens announcement
         var out_of_date = []; // store mails with ddl more than one month before today
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 30; i++) {
             gapi.client.gmail.users.messages.get({
                 'userId': 'me',
                 'id': result[i].id,
@@ -271,6 +271,15 @@ function listMessages(userId, query, callback) {
     getPageOfMessages(initialRequest, []);
 };
 
+function trashMessage(messageId) {
+  var request = gapi.client.gmail.users.messages.trash({
+    'userId': 'me',
+    'id': messageId
+  });
+  request.execute(
+    function(resp) { });
+}
+
 function appendMessageRowInbox(message, target_tab_table, diff_box = "") { // add email in home page //????
     if (target_tab_table === undefined) target_tab_table = '#inbox-table';
     appendHeaderToBody(message, target_tab_table, diff_box);
@@ -320,6 +329,7 @@ function appendMessageRowPersonal(message) { // add email in home page
 
 function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target_tab_table, diff_box = "",flag=false) {
 
+	//trashMessage('154de0a4708e763c');
     if (target_tab_table === undefined) target_tab_table = 'stevens-table';
     //appendHeaderToBody(message, target_tab_table, diff_box);
     if(flag){
@@ -404,7 +414,7 @@ function getExpirationDate(payload) {
         dec: 12,
     }
     var content_plain = (getBody(payload, true));
-    //console.log(content_plain);
+    console.log(content_plain);
     content_plain = content_plain.replace(/\n/g, ' ').replace(/\r\n/g, ' ');
     var res = content_plain.toLowerCase().split(' ');
     var re = /\d{1,2}\/\d{1,2}\/\d+/; // '2nums/2nums/nums'
@@ -506,7 +516,6 @@ function compareDate(D, M, Y, MaxD, MaxM, MaxY) {
     }
     return false;
 }
-
 
 function appendMessageRowQuery(message) {
     //add table to query_modal
@@ -657,6 +666,16 @@ function handleAuthResult(authResult) {
         $('#inbox').removeClass("hidden");
         $('#signout-button').on('click', function() {
             handleSignOut();
+        });
+        //http://stackoverflow.com/questions/3239598/how-can-i-get-the-id-of-an-element-using-jquery
+        $('#trash-button').on('click',function(){
+        	var toBeDelete = [];
+        	$('input:checked').each(function(){toBeDelete.push($(this).attr('id'))});
+        	for(var i = 0;i < toBeDelete.length;i++){
+        		var ID = toBeDelete[i].split('-')[2];
+        		trashMessage(ID);
+        		console.log('*deleted*:' + ID);
+        	};
         });
         $('#nav_search').removeClass("hidden");
         $('#welcome').addClass('hidden');
