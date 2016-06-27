@@ -542,7 +542,7 @@ function appendHeaderToBody(message, target, diff_box = "") {
     }
     if (message.labelIds.indexOf('UNREAD') != -1) {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id + '">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -562,7 +562,7 @@ function appendHeaderToBody(message, target, diff_box = "") {
         );
     } else {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id + '">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -658,6 +658,19 @@ function getHTMLPart(arr, flag = false) {
     return '';
 }
 
+//http://stackoverflow.com/questions/3607291/javascript-and-getelementbyid-for-multiple-elements-with-the-same-id
+function hideAllElementWithTheSameID(nonIdenticalID){
+	var n = $('#'+nonIdenticalID);
+	var i;
+	while(n || i > 10){
+		i++;
+		console.log(n);
+		n.addClass('hidden');
+		n.attr('id','deleted');
+		n = $('#'+nonIdenticalID);
+	}
+}
+
 function handleAuthResult(authResult) {
     if (authResult && !authResult.error) {
         loadGmailApi(); //email page
@@ -670,12 +683,18 @@ function handleAuthResult(authResult) {
         //http://stackoverflow.com/questions/3239598/how-can-i-get-the-id-of-an-element-using-jquery
         $('#trash-button').on('click',function(){
         	var toBeDelete = [];
-        	$('input:checked').each(function(){toBeDelete.push($(this).attr('id'))});
+        	$('input:checked').each(function(){
+        		var thisid = $(this).attr('id');
+        		toBeDelete.push(thisid);
+        		}
+        	);
         	for(var i = 0;i < toBeDelete.length;i++){
         		var ID = toBeDelete[i].split('-')[2];
+   				$('.'+ID).addClass('hidden');
         		trashMessage(ID);
         		console.log('*deleted*:' + ID);
         	};
+        	//displayStevens();
         });
         $('#nav_search').removeClass("hidden");
         $('#welcome').addClass('hidden');
