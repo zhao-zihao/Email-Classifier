@@ -169,4 +169,9 @@ iframe {
     box-shadow: none;
 }
 
+/* today's time */
+.inline-block{
+    display: inline-block;
+    margin: 5px;
+}
 
