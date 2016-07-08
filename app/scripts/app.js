@@ -195,7 +195,7 @@ function displayInbox(emailsPerPage, _callback) {
         emailsPerPage.inbox_numOfPage = Math.ceil(result.length / emailsPerPage.inbox_numPerPage);
         var i = 0;
         console.log('result.length = ' + result.length);
-        while (i < 50) {
+        while (i < result.length) {
             gapi.client.gmail.users.messages.get({
                 'userId': 'me',
                 'id': result[i].id
@@ -216,7 +216,7 @@ function displayInbox(emailsPerPage, _callback) {
                 }
             });
             i++;
-            if (i == 50 - 1)
+            if (i == result.length - 1)
                 _callback();
         };
 
@@ -238,12 +238,6 @@ function displayInbox(emailsPerPage, _callback) {
     select_function('inbox-all', '#inbox-select-all-all', '#inbox-select-all-none', message_ids);
     select_function('inbox-unread', '#inbox-select-unread-all', '#inbox-select-unread-none', message_ids_unread);
     select_function('inbox-read', '#inbox-select-read-all', '#inbox-select-read-none', message_ids_read);
-    // setTimeout(function() {
-    //     // and call `resolve` on the deferred object, once you're done
-    //     r.resolve();
-    // }, 2500);
-    // return r;
-    //return $.Deferred().resolve();
 }
 
 function displayPersonal() {
@@ -667,11 +661,16 @@ function appendMessageRowQuery(message) {
 }
 
 function appendHeaderToBody(message, target, diff_box = "", _callback) {
-    //var r = $.Deferred();
     if (target === undefined) target = '#inbox-table';
 
     var time = new Date(getHeader(message.payload.headers, 'Date'));
     var prettyTime = $.format.prettyDate(time);
+    //pagination can only work on inbox-all and stevens-all
+    var hide_or_not = '';
+    if(diff_box == 'inbox-all' || diff_box == 'stevens-all'){
+        hide_or_not = 'hidden';
+    }
+
     if (prettyTime === "more than 5 weeks ago") {
         prettyTime = $.format.date(time, "ddd, dd/MMM/yyyy");
     } else {
@@ -679,7 +678,7 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
     }
     if (message.labelIds.indexOf('UNREAD') != -1) {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="' + message.id + ' hidden" ">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id + hide_or_not + '" ">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -701,7 +700,7 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
             _callback();
     } else {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="' + message.id + ' hidden" ">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id +  hide_or_not + '" ">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -722,12 +721,6 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
         if (_callback != undefined)
             _callback();
     }
-    // setTimeout(function() {
-    //     // and call `resolve` on the deferred object, once you're done
-    //     r.resolve();
-    // }, 2500);
-    // return r;
-    //return $.Deferred().resolve();
 }
 
 function appendModalToBody(message, target) {

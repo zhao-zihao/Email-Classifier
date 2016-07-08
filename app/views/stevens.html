@@ -1,131 +1,133 @@
-
-<div id="stevens-modal"></div>
+<div id="stevens-modal">
+</div>
 
 
 <ul class="nav nav-tabs nav-justified">
-  <li class="active">
-    <a data-toggle="tab" href="#all-stevens">ALL</a></li>
-  <li>
-    <a data-toggle="tab" href="#unread-stevens">Unread</a></li>
-  <li>
-    <a data-toggle="tab" href="#read-stevens">Read</a></li>
-  <li>
-    <a data-toggle="tab" href="#delete-stevens">Delete</a></li>
+    <li class="active">
+        <a data-toggle="tab" href="#all-stevens">ALL</a></li>
+    <li>
+        <a data-toggle="tab" href="#unread-stevens">Unread</a></li>
+    <li>
+        <a data-toggle="tab" href="#read-stevens">Read</a></li>
+    <li>
+        <a data-toggle="tab" href="#delete-stevens">Delete</a></li>
 </ul>
 <div class="tab-content">
-  <div id="all-stevens" class="tab-pane fade in active">
-    <table class="row table table-striped table-hover table-responsive">
-      <thead>
-        <!--table head -->
-        <tr>
-          <tr>
-          <th class="col-md-1">
-          <div class="dropdown">
-             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
-                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a id='stevens-select-all-all' href="#">ALL</a></li>
-                  <li><a id='stevens-select-all-none' href="#">NONE</a></li>
-                  <li><a id='stevens-select-all-out' href="#">OUT OF DATE</a></li>
-                </ul>
-              </div>
-          </th>
-          <th class="col-md-2">From</th>
-          <th class="col-md-7">Subject</th>
-          <th class="col-md-2">Date/Time</th>
-        </tr>
-      </thead>
-      <tbody id="stevens-table"></tbody>
-     </table>
+    <div id="all-stevens" class="tab-pane fade in active">
+        <table class="row table table-striped table-hover table-responsive">
+            <thead>
+                <!--table head -->
+                <tr>
+                    <tr>
+                        <th class="col-md-1">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a id='stevens-select-all-all' href="#">ALL</a></li>
+                                    <li><a id='stevens-select-all-none' href="#">NONE</a></li>
+                                    <li><a id='stevens-select-all-out' href="#">OUT OF DATE</a></li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th class="col-md-2">From</th>
+                        <th class="col-md-7">Subject</th>
+                        <th class="col-md-2">Date/Time</th>
+                    </tr>
+            </thead>
+            <tbody id="stevens-table"></tbody>
+        </table>
 
-     <div id="pagination-stevens" class="text-center">
-      <nav>
-  <ul class="pagination">
-    <li>
-      <a href="#" aria-label="Previous" id="stevens-leftTenPages">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li class="page-item"><a class="page-stevens-button" id="1" href="#">1</a></li>
-    
-    <li>
-      <a href="#" aria-label="Next" id="stevens-rightTenPages">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+        <div id="pagination-stevens" class="text-center">
+            <nav>
+                <ul class="pagination">
+                    <li>
+                        <a href="#" aria-label="Previous" id="stevens-leftTenPages">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-stevens-button" id="1" href="#">1</a></li>
+
+                    <li>
+                        <a href="#" aria-label="Next" id="stevens-rightTenPages">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
     </div>
-
-  </div>
-  <div id="unread-stevens" class="tab-pane fade">
-    <table class="row table table-striped table-hover table-responsive">
-      <thead>
-        <!--table head -->
-        <tr>
-          <tr>
-          <th class="col-md-1">
-          <div class="dropdown">
-             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
-                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a id='stevens-select-unread-all' href="#">ALL</a></li>
-                  <li><a id='stevens-select-unread-none' href="#">NONE</a></li>
-                </ul>
-              </div>
-          </th>
-          <th class="col-md-2">From</th>
-          <th class="col-md-7">Subject</th>
-          <th class="col-md-2">Date/Time</th></tr>
-      </thead>
-      <tbody id="stevens-table-unread"></tbody>
-     </table>
-  </div>
-  <div id="read-stevens" class="tab-pane fade">
-    <table class="row table table-striped table-hover table-responsive">
-      <thead>
-        <!--table head -->
-        <tr>
-          <tr>
-          <th class="col-md-1">
-          <div class="dropdown">
-             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
-                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a id='stevens-select-read-all' href="#">ALL</a></li>
-                  <li><a id='stevens-select-read-none' href="#">NONE</a></li>
-                </ul>
-              </div>
-          </th>
-          <th class="col-md-2">From</th>
-          <th class="col-md-7">Subject</th>
-          <th class="col-md-2">Date/Time</th></tr>
-      </thead>
-      <tbody id="stevens-table-read"></tbody>
-     </table>
-  </div>
-  <div id="delete-stevens" class="tab-pane fade">
-    <table class="row table table-striped table-hover table-responsive">
-      <thead>
-        <!--table head -->
-        <tr>
-          <tr>
-          <th class="col-md-1">
-          <div class="dropdown">
-             <a class="dropdown-toggle" type="button" data-toggle="dropdown">
-                <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a id='stevens-select-delete-all' href="#">ALL</a></li>
-                  <li><a id='stevens-select-delete-none' href="#">NONE</a></li>
-                </ul>
-              </div>
-          </th>
-          <th class="col-md-2">From</th>
-          <th class="col-md-7">Subject</th>
-          <th class="col-md-2">Date/Time</th>
-        </tr>
-      </thead>
-      <tbody id="stevens-table-delete"></tbody>
-     </table>
-  </div>
+    <div id="unread-stevens" class="tab-pane fade">
+        <table class="row table table-striped table-hover table-responsive">
+            <thead>
+                <!--table head -->
+                <tr>
+                    <tr>
+                        <th class="col-md-1">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a id='stevens-select-unread-all' href="#">ALL</a></li>
+                                    <li><a id='stevens-select-unread-none' href="#">NONE</a></li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th class="col-md-2">From</th>
+                        <th class="col-md-7">Subject</th>
+                        <th class="col-md-2">Date/Time</th>
+                    </tr>
+            </thead>
+            <tbody id="stevens-table-unread"></tbody>
+        </table>
+    </div>
+    <div id="read-stevens" class="tab-pane fade">
+        <table class="row table table-striped table-hover table-responsive">
+            <thead>
+                <!--table head -->
+                <tr>
+                    <tr>
+                        <th class="col-md-1">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a id='stevens-select-read-all' href="#">ALL</a></li>
+                                    <li><a id='stevens-select-read-none' href="#">NONE</a></li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th class="col-md-2">From</th>
+                        <th class="col-md-7">Subject</th>
+                        <th class="col-md-2">Date/Time</th>
+                    </tr>
+            </thead>
+            <tbody id="stevens-table-read"></tbody>
+        </table>
+    </div>
+    <div id="delete-stevens" class="tab-pane fade">
+        <table class="row table table-striped table-hover table-responsive">
+            <thead>
+                <!--table head -->
+                <tr>
+                    <tr>
+                        <th class="col-md-1">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <i class="fa fa-check-circle-o fa-lg" aria-hidden="true"></i><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a id='stevens-select-delete-all' href="#">ALL</a></li>
+                                    <li><a id='stevens-select-delete-none' href="#">NONE</a></li>
+                                </ul>
+                            </div>
+                        </th>
+                        <th class="col-md-2">From</th>
+                        <th class="col-md-7">Subject</th>
+                        <th class="col-md-2">Date/Time</th>
+                    </tr>
+            </thead>
+            <tbody id="stevens-table-delete"></tbody>
+        </table>
+    </div>
 </div>
