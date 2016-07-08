@@ -2,6 +2,9 @@ body { padding-top: 70px; } /* the fixed nav bar */
 
 /* Sticky footer styles
 -------------------------------------------------- */
+/*.message-link{
+    text-decoration: none !important;
+}*/
 #today {
     float: left;
     font-family: 'Candal', sans-serif;
