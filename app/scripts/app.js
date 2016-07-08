@@ -44,8 +44,9 @@ function loadEmails() {
         stevens_numOfPage: 1
     }
     //listLabels();
-    displayInbox(emailsPerPage).done(
-        function() {
+    displayInbox(emailsPerPage,function() {
+            console.log('inbox message rolls finished');
+            console.log('loading inbox pagination...');
             //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
             // very tricky here....
             console.log(emailsPerPage.inbox_numOfPage);
@@ -55,7 +56,7 @@ function loadEmails() {
             };
 
             for (var i = 1; i < emailsPerPage.inbox_numOfPage; i++) {
-                $('#' + i + '.page-inbox-button').parent().after('<li><a class="page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+                $('#' + i + '.page-inbox-button').parent().after('<li class="page-item"><a class="page-link page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
             }
 
             $('.page-inbox-button').on('click', function() {
@@ -66,22 +67,27 @@ function loadEmails() {
                 for (var i = (num - 1) * emailsPerPage.inbox_numPerPage; i < num * emailsPerPage.inbox_numPerPage; i++) {
                     $('#inbox-table').children().eq(i).removeClass('hidden');
                 };
+                $('.page-item').removeClass('active');
+                $('#'+num+'.page-inbox-button').parent().addClass('active');
+
             });
-        }
-    );
+            console.log('inbox pagination finished!');
+        });
     displayPersonal();
     displayStevens(stevens_emailsPerPage,function() {
             //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
             // very tricky here....
             //stevens_emailsPerPage.stevens_numOfPage = 15;
-            console.log('stevens---------->>' + stevens_emailsPerPage.stevens_numOfPage);
+            console.log('stevens message rolls finished');
+            console.log('loading stevens pagination...');
+            //console.log('stevens---------->>' + stevens_emailsPerPage.stevens_numOfPage);
             for (var i = 0; i < stevens_emailsPerPage.stevens_numPerPage; i++) {
-                console.log(i);
+                //console.log(i);
                 $('#stevens-table').children().eq(i).removeClass('hidden');
             };
 
             for (var i = 1; i < stevens_emailsPerPage.stevens_numOfPage; i++) {
-                $('#' + i + '.page-stevens-button').parent().after('<li><a class="page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+                $('#' + i + '.page-stevens-button').parent().after('<li class="page-item"><a class="page-link page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
             }
 
             $('.page-stevens-button').on('click', function() {
@@ -94,9 +100,8 @@ function loadEmails() {
                 };
             });
             //$('#1.page-inbox-button').trigger('click');
-        })//).then(
-        
-    //);
+            console.log('stevens pagination finished!');
+        })
 }
 /**
  * Print all Labels in the authorized user's inbox. If no labels
@@ -122,46 +127,47 @@ function listLabels() {
     });
 }
 
-function displayInbox(emailsPerPage) {
-    var r = $.Deferred();
+function displayInbox(emailsPerPage,_callback) {
+    //var r = $.Deferred();
+    console.log('loading inbox message rolls ...');
     $('#inbox-button').trigger('click');
     var message_ids = [];
     var message_ids_unread = [];
     var message_ids_read = [];
     var message_ids_delete = [];
-    gapi.client.gmail.users.messages.list({
-        'userId': 'me',
-        'labelIds': 'INBOX',
-        //'maxResults': 50
-    }).then(function(resp) {
-        //console.log(resp);
-        //console.log("gapi.client.gmail.users.messages: ");
-        //console.log(gapi.client.gmail.users.messages);
-        emailsPerPage.inbox_numOfPage = Math.ceil(resp.result.messages.length / emailsPerPage.inbox_numPerPage);
-        $.each(resp.result.messages, function() {
-            //send request to gapi server for a specific message
-            console.log(resp.result.messages.length);
-            gapi.client.gmail.users.messages.get({
-                'userId': 'me',
-                'id': this.id
-            }).then(function(resp) {
-                // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
-                //console.log(resp);
-                //console.log(resp.result);
-                appendMessageRowInbox(resp.result, '#inbox-table', 'inbox-all');
-                message_ids.push(resp.result.id);
-                if (resp.result.labelIds.indexOf('UNREAD') === -1) {
-                    //inbox-table-read
-                    message_ids_read.push(resp.result.id);
-                    appendMessageRowInbox(resp.result, '#inbox-table-read', 'inbox-read');
-                } else {
-                    //inbox-table-unread
-                    message_ids_unread.push(resp.result.id);
-                    appendMessageRowInbox(resp.result, '#inbox-table-unread', 'inbox-unread');
-                }
-            });
-        });
-    }); // end gapi
+    listMessages("me", "in:inbox", function(result) {
+            //console.log(resp);
+            //console.log("gapi.client.gmail.users.messages: ");
+            //console.log(gapi.client.gmail.users.messages);
+            emailsPerPage.inbox_numOfPage = Math.ceil(result.length / emailsPerPage.inbox_numPerPage);
+            var i = 0;
+            console.log('result.length = '+result.length);
+            while(i < 50){
+                gapi.client.gmail.users.messages.get({
+                    'userId': 'me',
+                    'id': result[i].id
+                }).then(function(resp) {
+                    // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
+                    //console.log(resp);
+                    //console.log(resp.result);
+                    appendMessageRowInbox(resp.result, '#inbox-table', 'inbox-all');
+                    message_ids.push(resp.result.id);
+                    if (resp.result.labelIds.indexOf('UNREAD') === -1) {
+                        //inbox-table-read
+                        message_ids_read.push(resp.result.id);
+                        appendMessageRowInbox(resp.result, '#inbox-table-read', 'inbox-read');
+                    } else {
+                        //inbox-table-unread
+                        message_ids_unread.push(resp.result.id);
+                        appendMessageRowInbox(resp.result, '#inbox-table-unread', 'inbox-unread');
+                    }
+                });
+                i++;
+                if(i == 50 - 1)
+                    _callback();
+            };
+     
+        });// end gapi
     //#inbox-select function
     function select_function(diff_box, selector_all, selector_none, id_array = []) {
         $(selector_all).on('click', function() {
@@ -179,11 +185,11 @@ function displayInbox(emailsPerPage) {
     select_function('inbox-all', '#inbox-select-all-all', '#inbox-select-all-none', message_ids);
     select_function('inbox-unread', '#inbox-select-unread-all', '#inbox-select-unread-none', message_ids_unread);
     select_function('inbox-read', '#inbox-select-read-all', '#inbox-select-read-none', message_ids_read);
-    setTimeout(function() {
-        // and call `resolve` on the deferred object, once you're done
-        r.resolve();
-    }, 2500);
-    return r;
+    // setTimeout(function() {
+    //     // and call `resolve` on the deferred object, once you're done
+    //     r.resolve();
+    // }, 2500);
+    // return r;
     //return $.Deferred().resolve();
 }
 
@@ -208,6 +214,7 @@ function displayPersonal() {
 function displayStevens(stevens_emailsPerPage,_callback) {
     // var t = $.Deferred();
 //return new Promise(function(resolve,reject){
+    console.log('loading stevens message rolls ...');
     var message_stevens_ids = [];
     var message_stevens_ids_unread = [];
     var message_stevens_ids_read = [];
@@ -425,14 +432,12 @@ function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target
     }
     if (flag && outFlag) out_of_date.push(message.id); // don't move this push function
 
-    appendHeaderToBody(message, target_tab_table, diff_box).done(
-        function() {
+    appendHeaderToBody(message, target_tab_table, diff_box,function() {
             if (flag && outFlag) {
                 //console.log('red');
                 $('#stevens-table #message-tr-' + message.id).addClass('markAsRed');
             }
-        }
-    );
+        });
     appendModalToBody(message, '#stevens-modal');
 
     if (flag) {
@@ -464,7 +469,7 @@ function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target
 }
 
 function getExpirationDate(payload) {
-    console.log('---------------------------------------');
+    //console.log('---------------------------------------');
     var monthes = ['january', 'february', 'march', 'april', 'may',
             'june', 'july', 'august', 'september', 'october',
             'november', 'december', 'sep', 'dec', 'oct', 'aug',
@@ -561,12 +566,12 @@ function getExpirationDate(payload) {
     }
     // end for loop
     if (firstDateFlag) {
-        console.log('NONE');
+        //console.log('NONE');
         return 'none';
     }
-    console.log(MaxM + '/' + MaxD + '/' + MaxY);
+    //console.log(MaxM + '/' + MaxD + '/' + MaxY);
     var time = new Date(getHeader(payload.headers, 'Date'));
-    console.log(getHeader(payload.headers,'Date'));
+    //console.log(getHeader(payload.headers,'Date'));
     //console.log(time);
     return MaxM + '/' + MaxD + '/' + MaxY;
 }
@@ -617,8 +622,8 @@ function appendMessageRowQuery(message) {
     });
 }
 
-function appendHeaderToBody(message, target, diff_box = "") {
-    var r = $.Deferred();
+function appendHeaderToBody(message, target, diff_box = "",_callback) {
+    //var r = $.Deferred();
     if (target === undefined) target = '#inbox-table';
 
     var time = new Date(getHeader(message.payload.headers, 'Date'));
@@ -648,6 +653,8 @@ function appendHeaderToBody(message, target, diff_box = "") {
             </td>\
           </tr>'
         );
+        if(_callback != undefined)
+            _callback();
     } else {
         $(target).append(
             '<tr id="message-tr-' + message.id + '" class="' + message.id + ' hidden" ">\
@@ -668,12 +675,14 @@ function appendHeaderToBody(message, target, diff_box = "") {
             </td>\
           </tr>'
         );
+        if(_callback != undefined)
+            _callback();
     }
-    setTimeout(function() {
-        // and call `resolve` on the deferred object, once you're done
-        r.resolve();
-    }, 2500);
-    return r;
+    // setTimeout(function() {
+    //     // and call `resolve` on the deferred object, once you're done
+    //     r.resolve();
+    // }, 2500);
+    // return r;
     //return $.Deferred().resolve();
 }
 
@@ -788,7 +797,7 @@ function handleAuthResult(authResult) {
         });
         $('#inbox-button').addClass("sidebar-active");
         $('#inbox-button').on('click', function() {
-
+            $('#1.page-inbox-button').trigger('click');
             $('#mailcontent .emails').addClass('hidden');
             $('#inbox').removeClass('hidden');
             $('.sidebar-nav a').removeClass("sidebar-active");
@@ -803,6 +812,7 @@ function handleAuthResult(authResult) {
             console.log("personal-button click!")
         });
         $('#stevens-button').on('click', function() {
+            $('#1.page-stevens-button').trigger('click');
             $('#mailcontent .emails').addClass('hidden');
             $('#stevens').removeClass('hidden');
             $('.sidebar-nav a').removeClass("sidebar-active");
