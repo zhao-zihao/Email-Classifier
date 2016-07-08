@@ -50,6 +50,7 @@ function loadEmails() {
         //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
         // very tricky here....
         console.log(emailsPerPage.inbox_numOfPage);
+        $('#totalPages-inbox').text('Total Pages: ' + emailsPerPage.inbox_numOfPage);
         for (var i = 0; i < emailsPerPage.inbox_numPerPage; i++) {
             //console.log(i);
             $('#inbox-table').children().eq(i).removeClass('hidden');
@@ -78,7 +79,7 @@ function loadEmails() {
         });
         $('#inbox-leftTenPages').on('click', function(){
             console.log('inbox-left-pagination button clicked');
-            console.log($('#' + (firstHiddenPagination - 10) + '.page-inbox-button'));
+            //console.log($('#' + (firstHiddenPagination - 10) + '.page-inbox-button'));
             if(firstHiddenPagination - 10 > 0){
                 firstHiddenPagination -= 10;
                 $('.page-inbox-button').parent().addClass('hidden');
@@ -97,6 +98,7 @@ function loadEmails() {
                 }
             }
         });
+        $('#1.page-inbox-button').trigger('click');
         console.log('inbox pagination finished!');
     });
     displayPersonal();
@@ -106,6 +108,7 @@ function loadEmails() {
         //stevens_emailsPerPage.stevens_numOfPage = 15;
         console.log('stevens message rolls finished');
         console.log('loading stevens pagination...');
+        $('#totalPages-stevens').text('Total Pages: ' + stevens_emailsPerPage.stevens_numOfPage);
         //console.log('stevens---------->>' + stevens_emailsPerPage.stevens_numOfPage);
         for (var i = 0; i < stevens_emailsPerPage.stevens_numPerPage; i++) {
             //console.log(i);
@@ -132,7 +135,7 @@ function loadEmails() {
         });
         $('#stevens-leftTenPages').on('click', function(){
             console.log('stevens-left-pagination button clicked');
-            console.log($('#' + (firstHiddenPagination - 10) + '.page-stevens-button'));
+            //console.log($('#' + (firstHiddenPagination - 10) + '.page-stevens-button'));
             if(firstHiddenPagination - 10 > 0){
                 firstHiddenPagination -= 10;
                 $('.page-stevens-button').parent().addClass('hidden');
@@ -151,7 +154,6 @@ function loadEmails() {
                 }
             }
         });
-        //$('#1.page-inbox-button').trigger('click');
 
         console.log('stevens pagination finished!');
     })
@@ -678,7 +680,7 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
     }
     if (message.labelIds.indexOf('UNREAD') != -1) {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="' + message.id + hide_or_not + '" ">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id +' '+ hide_or_not + '" ">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -700,7 +702,7 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
             _callback();
     } else {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="' + message.id +  hide_or_not + '" ">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id + ' ' + hide_or_not + '" ">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
