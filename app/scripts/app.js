@@ -43,14 +43,14 @@ function loadEmails() {
         stevens_numPerPage: 10,
         stevens_numOfPage: 1
     }
-    listLabels();
+    //listLabels();
     displayInbox(emailsPerPage).done(
         function() {
             //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
             // very tricky here....
             console.log(emailsPerPage.inbox_numOfPage);
             for (var i = 0; i < emailsPerPage.inbox_numPerPage; i++) {
-                console.log(i);
+                //console.log(i);
                 $('#inbox-table').children().eq(i).removeClass('hidden');
             };
 
@@ -70,9 +70,7 @@ function loadEmails() {
         }
     );
     displayPersonal();
-    displayStevens(stevens_emailsPerPage).done(
-        function() {
-            $('#1.page-inbox-button').trigger('click');
+    displayStevens(stevens_emailsPerPage,function() {
             //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
             // very tricky here....
             //stevens_emailsPerPage.stevens_numOfPage = 15;
@@ -95,8 +93,10 @@ function loadEmails() {
                     $('#stevens-table').children().eq(i).removeClass('hidden');
                 };
             });
-        }
-    );
+            //$('#1.page-inbox-button').trigger('click');
+        })//).then(
+        
+    //);
 }
 /**
  * Print all Labels in the authorized user's inbox. If no labels
@@ -205,9 +205,9 @@ function displayPersonal() {
     });
 }
 
-function displayStevens(stevens_emailsPerPage) {
-    var t = $.Deferred();
-
+function displayStevens(stevens_emailsPerPage,_callback) {
+    // var t = $.Deferred();
+//return new Promise(function(resolve,reject){
     var message_stevens_ids = [];
     var message_stevens_ids_unread = [];
     var message_stevens_ids_read = [];
@@ -235,7 +235,8 @@ function displayStevens(stevens_emailsPerPage) {
         // getdate end
         var mailID_DDL = {}; // store mail ddl for stevens announcement
         var out_of_date = []; // store mails with ddl more than one month before today
-        for (var i = 0; i < result.length; i++) {
+        var i = 0;
+        while (i < result.length) {
             gapi.client.gmail.users.messages.get({
                 'userId': 'me',
                 'id': result[i].id,
@@ -255,34 +256,38 @@ function displayStevens(stevens_emailsPerPage) {
                     }
                 }
             );
-        };
-        //console.log(message_stevens_ids);
-        // stevens-select function
-        function select_function(diff_box, selector_all, selector_none, id_array = []) {
-            $(selector_all).on('click', function() {
-                console.log(id_array.length);
-                $.each(id_array, function() {
-                    $("#" + diff_box + "check-" + this).prop('checked', true);
-                });
+            if(i == result.length - 1)
+                _callback();
+            ++i;
+        }
+    //console.log(message_stevens_ids);
+    // stevens-select function
+    function select_function(diff_box, selector_all, selector_none, id_array = []) {
+        $(selector_all).on('click', function() {
+            console.log(id_array.length);
+            $.each(id_array, function() {
+                $("#" + diff_box + "check-" + this).prop('checked', true);
             });
-            $(selector_none).on('click', function() {
-                $.each(id_array, function() {
-                    $("#" + diff_box + "check-" + this).prop('checked', false);
-                });
+        });
+        $(selector_none).on('click', function() {
+            $.each(id_array, function() {
+                $("#" + diff_box + "check-" + this).prop('checked', false);
             });
-        };
-        select_function('stevens-all', '#stevens-select-all-all', '#stevens-select-all-none', message_stevens_ids);
-        select_function('stevens-unread', '#stevens-select-unread-all', '#stevens-select-unread-none', message_stevens_ids_unread);
-        select_function('stevens-read', '#stevens-select-read-all', '#stevens-select-read-none', message_stevens_ids_read);
-        select_function('stevens-all', '#stevens-select-all-out', '#stevens-select-all-none', out_of_date);
+        });
+    };
+    select_function('stevens-all', '#stevens-select-all-all', '#stevens-select-all-none', message_stevens_ids);
+    select_function('stevens-unread', '#stevens-select-unread-all', '#stevens-select-unread-none', message_stevens_ids_unread);
+    select_function('stevens-read', '#stevens-select-read-all', '#stevens-select-read-none', message_stevens_ids_read);
+    select_function('stevens-all', '#stevens-select-all-out', '#stevens-select-all-none', out_of_date);
     });
-
-    setTimeout(function() {
-        // and call `resolve` on the deferred object, once you're done
-        t.resolve();
-    }, 6000);
-    return t;
-    //return $.Deferred().resolve();
+    
+//});
+    // setTimeout(function() {
+    //     // and call `resolve` on the deferred object, once you're done
+    //     t.resolve();
+    // }, 7000);
+    // return t;
+    // //return $.Deferred().resolve();
 }
 
 function listDelete(tab = '#inbox-table', query_input = 'older_than:1m') {
@@ -414,7 +419,7 @@ function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target
     //appendHeaderToBody(message, target_tab_table, diff_box);
     if (flag) {
         var DDL = getExpirationDate(message.payload);
-        console.log('inside=' + message.id);
+        //console.log('inside=' + message.id);
         mailID_DDL[message.id] = DDL;
         var outFlag = compareDate(TODAY, DDL);
     }
@@ -423,7 +428,7 @@ function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target
     appendHeaderToBody(message, target_tab_table, diff_box).done(
         function() {
             if (flag && outFlag) {
-                console.log('red');
+                //console.log('red');
                 $('#stevens-table #message-tr-' + message.id).addClass('markAsRed');
             }
         }
@@ -535,7 +540,7 @@ function getExpirationDate(payload) {
                 } else
                     continue;
             } else if (Y == 'null' || Y <= 1000 || Y > 3000)
-                Y = 2016;
+                Y = getHeader(payload.headers,'Date').split(' ')[4];
         } else
             continue;
         //console.log('M:[' + MaxM + ']' + ' D:[' + MaxD + ']' + ' Y:[' + MaxY + ']');
@@ -560,6 +565,9 @@ function getExpirationDate(payload) {
         return 'none';
     }
     console.log(MaxM + '/' + MaxD + '/' + MaxY);
+    var time = new Date(getHeader(payload.headers, 'Date'));
+    console.log(getHeader(payload.headers,'Date'));
+    //console.log(time);
     return MaxM + '/' + MaxD + '/' + MaxY;
 }
 
