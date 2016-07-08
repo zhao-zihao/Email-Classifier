@@ -59,7 +59,7 @@ function loadEmails() {
             if(i < 10)
                 $('#' + i + '.page-inbox-button').parent().after('<li class="page-item"><a class="page-link page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
             else
-                $('#' + i + '.page-inbox-button').parent().after('<li class="page-item hidden"><a class="page-link page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');    
+                $('#' + i + '.page-inbox-button').parent().after('<li class="page-item hidden"><a class="page-link page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
         }
         var firstHiddenPagination = 1;
         //begin to modify pagination
@@ -113,9 +113,12 @@ function loadEmails() {
         };
 
         for (var i = 1; i < stevens_emailsPerPage.stevens_numOfPage; i++) {
+          if(i < 10)
             $('#' + i + '.page-stevens-button').parent().after('<li class="page-item"><a class="page-link page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+          else
+            $('#' + i + '.page-stevens-button').parent().after('<li class="page-item hidden"><a class="page-link page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
         }
-
+        var firstHiddenPagination = 1;
         $('.page-stevens-button').on('click', function() {
             //http://stackoverflow.com/questions/10291017/how-to-get-id-of-button-user-just-clicked
             var num = parseInt(this.id);
@@ -123,9 +126,30 @@ function loadEmails() {
             $('#stevens-table').children().addClass('hidden');
             for (var i = (num - 1) * stevens_emailsPerPage.stevens_numPerPage; i < num * stevens_emailsPerPage.stevens_numPerPage; i++) {
                 $('#stevens-table').children().eq(i).removeClass('hidden');
-                $('.page-item').removeClass('active');
-                $('#' + num + '.page-stevens-button').parent().addClass('active');
             };
+            $('.page-item').removeClass('active');
+            $('#' + num + '.page-stevens-button').parent().addClass('active');
+        });
+        $('#stevens-leftTenPages').on('click', function(){
+            console.log('stevens-left-pagination button clicked');
+            console.log($('#' + (firstHiddenPagination - 10) + '.page-stevens-button'));
+            if(firstHiddenPagination - 10 > 0){
+                firstHiddenPagination -= 10;
+                $('.page-stevens-button').parent().addClass('hidden');
+                for(var i = firstHiddenPagination;i < firstHiddenPagination + 10;i++){
+                    $('#' + i + '.page-stevens-button').parent().removeClass('hidden');
+                }
+            }
+        });
+        $('#stevens-rightTenPages').on('click', function(){
+            console.log('stevens-right-pagination button clicked');
+            if(firstHiddenPagination + 10 <= stevens_emailsPerPage.stevens_numOfPage + 1){
+                firstHiddenPagination += 10;
+                $('.page-stevens-button').parent().addClass('hidden');
+                for(var i = firstHiddenPagination;i < firstHiddenPagination + 10;i++){
+                    $('#' + i + '.page-stevens-button').parent().removeClass('hidden');
+                }
+            }
         });
         //$('#1.page-inbox-button').trigger('click');
 
