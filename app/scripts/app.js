@@ -40,63 +40,123 @@ function loadEmails() {
         inbox_numOfPage: 1
     }
     var stevens_emailsPerPage = {
-        stevens_numPerPage: 10,
-        stevens_numOfPage: 1
-    }
-    listLabels();
-    displayInbox(emailsPerPage).done(
-        function() {
-            //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
-            // very tricky here....
-            console.log(emailsPerPage.inbox_numOfPage);
-            for (var i = 0; i < emailsPerPage.inbox_numPerPage; i++) {
-                console.log(i);
+            stevens_numPerPage: 10,
+            stevens_numOfPage: 1
+        }
+        //listLabels();
+    displayInbox(emailsPerPage, function() {
+        console.log('inbox message rolls finished');
+        console.log('loading inbox pagination...');
+        //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
+        // very tricky here....
+        console.log(emailsPerPage.inbox_numOfPage);
+        $('#totalPages-inbox').text('Total Pages: ' + emailsPerPage.inbox_numOfPage);
+        for (var i = 0; i < emailsPerPage.inbox_numPerPage; i++) {
+            //console.log(i);
+            $('#inbox-table').children().eq(i).removeClass('hidden');
+        };
+
+        for (var i = 1; i < emailsPerPage.inbox_numOfPage; i++) {
+            if(i < 10)
+                $('#' + i + '.page-inbox-button').parent().after('<li class="page-item"><a class="page-link page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+            else
+                $('#' + i + '.page-inbox-button').parent().after('<li class="page-item hidden"><a class="page-link page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+        }
+        var firstHiddenPagination = 1;
+        //begin to modify pagination
+
+        $('.page-inbox-button').on('click', function() {
+            //http://stackoverflow.com/questions/10291017/how-to-get-id-of-button-user-just-clicked
+            var num = parseInt(this.id);
+            console.log('pagination button clicked');
+            $('#inbox-table').children().addClass('hidden');
+            for (var i = (num - 1) * emailsPerPage.inbox_numPerPage; i < num * emailsPerPage.inbox_numPerPage; i++) {
                 $('#inbox-table').children().eq(i).removeClass('hidden');
             };
+            $('.page-item').removeClass('active');
+            $('#' + num + '.page-inbox-button').parent().addClass('active');
 
-            for (var i = 1; i < emailsPerPage.inbox_numOfPage; i++) {
-                $('#' + i + '.page-inbox-button').parent().after('<li><a class="page-inbox-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+        });
+        $('#inbox-leftTenPages').on('click', function(){
+            console.log('inbox-left-pagination button clicked');
+            //console.log($('#' + (firstHiddenPagination - 10) + '.page-inbox-button'));
+            if(firstHiddenPagination - 10 > 0){
+                firstHiddenPagination -= 10;
+                $('.page-inbox-button').parent().addClass('hidden');
+                for(var i = firstHiddenPagination;i < firstHiddenPagination + 10;i++){
+                    $('#' + i + '.page-inbox-button').parent().removeClass('hidden');
+                }
             }
-
-            $('.page-inbox-button').on('click', function() {
-                //http://stackoverflow.com/questions/10291017/how-to-get-id-of-button-user-just-clicked
-                var num = parseInt(this.id);
-                console.log('pagination button clicked');
-                $('#inbox-table').children().addClass('hidden');
-                for (var i = (num - 1) * emailsPerPage.inbox_numPerPage; i < num * emailsPerPage.inbox_numPerPage; i++) {
-                    $('#inbox-table').children().eq(i).removeClass('hidden');
-                };
-            });
-        }
-    );
+        });
+        $('#inbox-rightTenPages').on('click', function(){
+            console.log('inbox-right-pagination button clicked');
+            if(firstHiddenPagination + 10 <= emailsPerPage.inbox_numOfPage + 1){
+                firstHiddenPagination += 10;
+                $('.page-inbox-button').parent().addClass('hidden');
+                for(var i = firstHiddenPagination;i < firstHiddenPagination + 10;i++){
+                    $('#' + i + '.page-inbox-button').parent().removeClass('hidden');
+                }
+            }
+        });
+        $('#1.page-inbox-button').trigger('click');
+        console.log('inbox pagination finished!');
+    });
     displayPersonal();
-    displayStevens(stevens_emailsPerPage).done(
-        function() {
-            $('#1.page-inbox-button').trigger('click');
-            //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
-            // very tricky here....
-            //stevens_emailsPerPage.stevens_numOfPage = 15;
-            console.log('stevens---------->>' + stevens_emailsPerPage.stevens_numOfPage);
-            for (var i = 0; i < stevens_emailsPerPage.stevens_numPerPage; i++) {
-                console.log(i);
+    displayStevens(stevens_emailsPerPage, function() {
+        //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
+        // very tricky here....
+        //stevens_emailsPerPage.stevens_numOfPage = 15;
+        console.log('stevens message rolls finished');
+        console.log('loading stevens pagination...');
+        $('#totalPages-stevens').text('Total Pages: ' + stevens_emailsPerPage.stevens_numOfPage);
+        //console.log('stevens---------->>' + stevens_emailsPerPage.stevens_numOfPage);
+        for (var i = 0; i < stevens_emailsPerPage.stevens_numPerPage; i++) {
+            //console.log(i);
+            $('#stevens-table').children().eq(i).removeClass('hidden');
+        };
+
+        for (var i = 1; i < stevens_emailsPerPage.stevens_numOfPage; i++) {
+          if(i < 10)
+            $('#' + i + '.page-stevens-button').parent().after('<li class="page-item"><a class="page-link page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+          else
+            $('#' + i + '.page-stevens-button').parent().after('<li class="page-item hidden"><a class="page-link page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+        }
+        var firstHiddenPagination = 1;
+        $('.page-stevens-button').on('click', function() {
+            //http://stackoverflow.com/questions/10291017/how-to-get-id-of-button-user-just-clicked
+            var num = parseInt(this.id);
+            console.log('pagination button clicked');
+            $('#stevens-table').children().addClass('hidden');
+            for (var i = (num - 1) * stevens_emailsPerPage.stevens_numPerPage; i < num * stevens_emailsPerPage.stevens_numPerPage; i++) {
                 $('#stevens-table').children().eq(i).removeClass('hidden');
             };
-
-            for (var i = 1; i < stevens_emailsPerPage.stevens_numOfPage; i++) {
-                $('#' + i + '.page-stevens-button').parent().after('<li><a class="page-stevens-button" id="' + (i + 1) + '" href="#">' + (i + 1) + '</a></li>');
+            $('.page-item').removeClass('active');
+            $('#' + num + '.page-stevens-button').parent().addClass('active');
+        });
+        $('#stevens-leftTenPages').on('click', function(){
+            console.log('stevens-left-pagination button clicked');
+            //console.log($('#' + (firstHiddenPagination - 10) + '.page-stevens-button'));
+            if(firstHiddenPagination - 10 > 0){
+                firstHiddenPagination -= 10;
+                $('.page-stevens-button').parent().addClass('hidden');
+                for(var i = firstHiddenPagination;i < firstHiddenPagination + 10;i++){
+                    $('#' + i + '.page-stevens-button').parent().removeClass('hidden');
+                }
             }
+        });
+        $('#stevens-rightTenPages').on('click', function(){
+            console.log('stevens-right-pagination button clicked');
+            if(firstHiddenPagination + 10 <= stevens_emailsPerPage.stevens_numOfPage + 1){
+                firstHiddenPagination += 10;
+                $('.page-stevens-button').parent().addClass('hidden');
+                for(var i = firstHiddenPagination;i < firstHiddenPagination + 10;i++){
+                    $('#' + i + '.page-stevens-button').parent().removeClass('hidden');
+                }
+            }
+        });
 
-            $('.page-stevens-button').on('click', function() {
-                //http://stackoverflow.com/questions/10291017/how-to-get-id-of-button-user-just-clicked
-                var num = parseInt(this.id);
-                console.log('pagination button clicked');
-                $('#stevens-table').children().addClass('hidden');
-                for (var i = (num - 1) * stevens_emailsPerPage.stevens_numPerPage; i < num * stevens_emailsPerPage.stevens_numPerPage; i++) {
-                    $('#stevens-table').children().eq(i).removeClass('hidden');
-                };
-            });
-        }
-    );
+        console.log('stevens pagination finished!');
+    })
 }
 /**
  * Print all Labels in the authorized user's inbox. If no labels
@@ -122,28 +182,25 @@ function listLabels() {
     });
 }
 
-function displayInbox(emailsPerPage) {
-    var r = $.Deferred();
+function displayInbox(emailsPerPage, _callback) {
+    //var r = $.Deferred();
+    console.log('loading inbox message rolls ...');
     $('#inbox-button').trigger('click');
     var message_ids = [];
     var message_ids_unread = [];
     var message_ids_read = [];
     var message_ids_delete = [];
-    gapi.client.gmail.users.messages.list({
-        'userId': 'me',
-        'labelIds': 'INBOX',
-        //'maxResults': 50
-    }).then(function(resp) {
+    listMessages("me", "in:inbox", function(result) {
         //console.log(resp);
         //console.log("gapi.client.gmail.users.messages: ");
         //console.log(gapi.client.gmail.users.messages);
-        emailsPerPage.inbox_numOfPage = Math.ceil(resp.result.messages.length / emailsPerPage.inbox_numPerPage);
-        $.each(resp.result.messages, function() {
-            //send request to gapi server for a specific message
-            console.log(resp.result.messages.length);
+        emailsPerPage.inbox_numOfPage = Math.ceil(result.length / emailsPerPage.inbox_numPerPage);
+        var i = 0;
+        console.log('result.length = ' + result.length);
+        while (i < result.length) {
             gapi.client.gmail.users.messages.get({
                 'userId': 'me',
-                'id': this.id
+                'id': result[i].id
             }).then(function(resp) {
                 // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
                 //console.log(resp);
@@ -160,7 +217,11 @@ function displayInbox(emailsPerPage) {
                     appendMessageRowInbox(resp.result, '#inbox-table-unread', 'inbox-unread');
                 }
             });
-        });
+            i++;
+            if (i == result.length - 1)
+                _callback();
+        };
+
     }); // end gapi
     //#inbox-select function
     function select_function(diff_box, selector_all, selector_none, id_array = []) {
@@ -179,12 +240,6 @@ function displayInbox(emailsPerPage) {
     select_function('inbox-all', '#inbox-select-all-all', '#inbox-select-all-none', message_ids);
     select_function('inbox-unread', '#inbox-select-unread-all', '#inbox-select-unread-none', message_ids_unread);
     select_function('inbox-read', '#inbox-select-read-all', '#inbox-select-read-none', message_ids_read);
-    setTimeout(function() {
-        // and call `resolve` on the deferred object, once you're done
-        r.resolve();
-    }, 2500);
-    return r;
-    //return $.Deferred().resolve();
 }
 
 function displayPersonal() {
@@ -205,9 +260,10 @@ function displayPersonal() {
     });
 }
 
-function displayStevens(stevens_emailsPerPage) {
-    var t = $.Deferred();
-
+function displayStevens(stevens_emailsPerPage, _callback) {
+    // var t = $.Deferred();
+    //return new Promise(function(resolve,reject){
+    console.log('loading stevens message rolls ...');
     var message_stevens_ids = [];
     var message_stevens_ids_unread = [];
     var message_stevens_ids_read = [];
@@ -216,7 +272,7 @@ function displayStevens(stevens_emailsPerPage) {
         query_input = "Google";
     console.log("display stevens function works!");
     listMessages("me", "'Stevens Announcement'", function(result) {
-        console.log(Math.ceil(result.length / stevens_emailsPerPage.stevens_numPerPage));
+        //console.log(Math.ceil(result.length / stevens_emailsPerPage.stevens_numPerPage));
         stevens_emailsPerPage.stevens_numOfPage = Math.ceil(result.length / stevens_emailsPerPage.stevens_numPerPage);
         console.log(stevens_emailsPerPage.stevens_numOfPage);
 
@@ -235,7 +291,8 @@ function displayStevens(stevens_emailsPerPage) {
         // getdate end
         var mailID_DDL = {}; // store mail ddl for stevens announcement
         var out_of_date = []; // store mails with ddl more than one month before today
-        for (var i = 0; i < result.length; i++) {
+        var i = 0;
+        while (i < result.length) {
             gapi.client.gmail.users.messages.get({
                 'userId': 'me',
                 'id': result[i].id,
@@ -255,7 +312,10 @@ function displayStevens(stevens_emailsPerPage) {
                     }
                 }
             );
-        };
+            if (i == result.length - 1)
+                _callback();
+            ++i;
+        }
         //console.log(message_stevens_ids);
         // stevens-select function
         function select_function(diff_box, selector_all, selector_none, id_array = []) {
@@ -276,17 +336,9 @@ function displayStevens(stevens_emailsPerPage) {
         select_function('stevens-read', '#stevens-select-read-all', '#stevens-select-read-none', message_stevens_ids_read);
         select_function('stevens-all', '#stevens-select-all-out', '#stevens-select-all-none', out_of_date);
     });
-
-    setTimeout(function() {
-        // and call `resolve` on the deferred object, once you're done
-        t.resolve();
-    }, 6000);
-    return t;
-    //return $.Deferred().resolve();
 }
 
 function listDelete(tab = '#inbox-table', query_input = 'older_than:1m') {
-
     $(tab).empty();
     //$('#pop_up_modal').empty();
     listMessages("me", query_input, function(result) {
@@ -414,20 +466,18 @@ function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target
     //appendHeaderToBody(message, target_tab_table, diff_box);
     if (flag) {
         var DDL = getExpirationDate(message.payload);
-        console.log('inside=' + message.id);
+        //console.log('inside=' + message.id);
         mailID_DDL[message.id] = DDL;
         var outFlag = compareDate(TODAY, DDL);
     }
     if (flag && outFlag) out_of_date.push(message.id); // don't move this push function
 
-    appendHeaderToBody(message, target_tab_table, diff_box).done(
-        function() {
-            if (flag && outFlag) {
-                console.log('red');
-                $('#stevens-table #message-tr-' + message.id).addClass('markAsRed');
-            }
+    appendHeaderToBody(message, target_tab_table, diff_box, function() {
+        if (flag && outFlag) {
+            //console.log('red');
+            $('#stevens-table #message-tr-' + message.id).addClass('markAsRed');
         }
-    );
+    });
     appendModalToBody(message, '#stevens-modal');
 
     if (flag) {
@@ -459,7 +509,7 @@ function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target
 }
 
 function getExpirationDate(payload) {
-    console.log('---------------------------------------');
+    //console.log('---------------------------------------');
     var monthes = ['january', 'february', 'march', 'april', 'may',
             'june', 'july', 'august', 'september', 'october',
             'november', 'december', 'sep', 'dec', 'oct', 'aug',
@@ -535,7 +585,7 @@ function getExpirationDate(payload) {
                 } else
                     continue;
             } else if (Y == 'null' || Y <= 1000 || Y > 3000)
-                Y = 2016;
+                Y = getHeader(payload.headers, 'Date').split(' ')[4];
         } else
             continue;
         //console.log('M:[' + MaxM + ']' + ' D:[' + MaxD + ']' + ' Y:[' + MaxY + ']');
@@ -556,10 +606,13 @@ function getExpirationDate(payload) {
     }
     // end for loop
     if (firstDateFlag) {
-        console.log('NONE');
+        //console.log('NONE');
         return 'none';
     }
-    console.log(MaxM + '/' + MaxD + '/' + MaxY);
+    //console.log(MaxM + '/' + MaxD + '/' + MaxY);
+    var time = new Date(getHeader(payload.headers, 'Date'));
+    //console.log(getHeader(payload.headers,'Date'));
+    //console.log(time);
     return MaxM + '/' + MaxD + '/' + MaxY;
 }
 
@@ -609,12 +662,17 @@ function appendMessageRowQuery(message) {
     });
 }
 
-function appendHeaderToBody(message, target, diff_box = "") {
-    var r = $.Deferred();
+function appendHeaderToBody(message, target, diff_box = "", _callback) {
     if (target === undefined) target = '#inbox-table';
 
     var time = new Date(getHeader(message.payload.headers, 'Date'));
     var prettyTime = $.format.prettyDate(time);
+    //pagination can only work on inbox-all and stevens-all
+    var hide_or_not = '';
+    if(diff_box == 'inbox-all' || diff_box == 'stevens-all'){
+        hide_or_not = 'hidden';
+    }
+
     if (prettyTime === "more than 5 weeks ago") {
         prettyTime = $.format.date(time, "ddd, dd/MMM/yyyy");
     } else {
@@ -622,7 +680,7 @@ function appendHeaderToBody(message, target, diff_box = "") {
     }
     if (message.labelIds.indexOf('UNREAD') != -1) {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="' + message.id + ' hidden" ">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id +' '+ hide_or_not + '" ">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -630,19 +688,21 @@ function appendHeaderToBody(message, target, diff_box = "") {
             </td>\
             <td>' + '<strong>' + getHeader(message.payload.headers, 'From') + '</strong>' + '</td>\
             <td>\
-              <a href="#message-modal-' + message.id +
+              <button type="button" class="btn btn-default" class="message-link" href="#message-modal-' + message.id +
             '" data-toggle="modal" id="message-link-' + message.id + '">' +
             '<strong>' + getHeader(message.payload.headers, 'Subject') + '</strong>' +
-            '</a>\
+            '</button>\
             </td>\
             <td id="DateDDL-' + message.id + '">\
                   ' + prettyTime + '\
             </td>\
           </tr>'
         );
+        if (_callback != undefined)
+            _callback();
     } else {
         $(target).append(
-            '<tr id="message-tr-' + message.id + '" class="' + message.id + ' hidden" ">\
+            '<tr id="message-tr-' + message.id + '" class="' + message.id + ' ' + hide_or_not + '" ">\
             <td>\
                 <div class="checkbox">\
                     <label><input type="checkbox" id="' + diff_box + 'check-' + message.id + '" value="' + message.id + '"></label>\
@@ -650,23 +710,19 @@ function appendHeaderToBody(message, target, diff_box = "") {
             </td>\
             <td>' + getHeader(message.payload.headers, 'From') + '</td>\
             <td>\
-              <a href="#message-modal-' + message.id +
+              <button type="button" class="btn btn-default" class="message-link" href="#message-modal-' + message.id +
             '" data-toggle="modal" id="message-link-' + message.id + '">' +
             getHeader(message.payload.headers, 'Subject') +
-            '</a>\
+            '</button>\
             </td>\
             <td id="DateDDL-' + message.id + '">\
                   ' + prettyTime + '\
             </td>\
           </tr>'
         );
+        if (_callback != undefined)
+            _callback();
     }
-    setTimeout(function() {
-        // and call `resolve` on the deferred object, once you're done
-        r.resolve();
-    }, 2500);
-    return r;
-    //return $.Deferred().resolve();
 }
 
 function appendModalToBody(message, target) {
@@ -780,7 +836,7 @@ function handleAuthResult(authResult) {
         });
         $('#inbox-button').addClass("sidebar-active");
         $('#inbox-button').on('click', function() {
-
+            $('#1.page-inbox-button').trigger('click');
             $('#mailcontent .emails').addClass('hidden');
             $('#inbox').removeClass('hidden');
             $('.sidebar-nav a').removeClass("sidebar-active");
@@ -795,6 +851,7 @@ function handleAuthResult(authResult) {
             console.log("personal-button click!")
         });
         $('#stevens-button').on('click', function() {
+            $('#1.page-stevens-button').trigger('click');
             $('#mailcontent .emails').addClass('hidden');
             $('#stevens').removeClass('hidden');
             $('.sidebar-nav a').removeClass("sidebar-active");
