@@ -688,10 +688,10 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
             </td>\
             <td>' + '<strong>' + getHeader(message.payload.headers, 'From') + '</strong>' + '</td>\
             <td>\
-              <a class="message-link" href="#message-modal-' + message.id +
+              <button type="button" class="btn btn-default" class="message-link" href="#message-modal-' + message.id +
             '" data-toggle="modal" id="message-link-' + message.id + '">' +
             '<strong>' + getHeader(message.payload.headers, 'Subject') + '</strong>' +
-            '</a>\
+            '</button>\
             </td>\
             <td id="DateDDL-' + message.id + '">\
                   ' + prettyTime + '\
@@ -710,10 +710,10 @@ function appendHeaderToBody(message, target, diff_box = "", _callback) {
             </td>\
             <td>' + getHeader(message.payload.headers, 'From') + '</td>\
             <td>\
-              <a class="message-link" href="#message-modal-' + message.id +
+              <button type="button" class="btn btn-default" class="message-link" href="#message-modal-' + message.id +
             '" data-toggle="modal" id="message-link-' + message.id + '">' +
             getHeader(message.payload.headers, 'Subject') +
-            '</a>\
+            '</button>\
             </td>\
             <td id="DateDDL-' + message.id + '">\
                   ' + prettyTime + '\
