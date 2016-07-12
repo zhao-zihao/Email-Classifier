@@ -137,6 +137,12 @@ iframe {
     color: #ffffff;
     overflow: hidden;
 }
+.bg-5 {  
+    position: relative;
+    background-color: whitesmoke; /* Green */
+    color: #000000;
+    overflow: hidden;
+}
 #right-side-col{
     overflow: scroll;
 }
