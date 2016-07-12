@@ -34,6 +34,7 @@ function handleSignOut() {
     window.location.href = "https://accounts.google.com/logout"; //sign out google account
 }
 
+//load emails in webpage
 function loadEmails() {
     var emailsPerPage = {
         inbox_numPerPage: 10,
@@ -101,7 +102,9 @@ function loadEmails() {
         $('#1.page-inbox-button').trigger('click');
         console.log('inbox pagination finished!');
     });
+    
     displayPersonal();
+    
     displayStevens(stevens_emailsPerPage, function() {
         //http://stackoverflow.com/questions/8926678/how-to-get-child-element-by-index-in-jquery
         // very tricky here....
@@ -156,7 +159,12 @@ function loadEmails() {
         });
 
         console.log('stevens pagination finished!');
-    })
+    });
+    
+    displayPromotion();
+
+    listLabels();
+    
 }
 /**
  * Print all Labels in the authorized user's inbox. If no labels
@@ -259,6 +267,43 @@ function displayPersonal() {
         });
     });
 }
+function displayPromotion() {
+
+    var request = gapi.client.gmail.users.messages.list({
+        'userId': 'me',
+        'labelIds': 'CATEGORY_PROMOTIONS',
+        'maxResults': 20
+    });
+    
+    request.execute(function(response) {
+        $.each(response.messages, function() {
+            gapi.client.gmail.users.messages.get({
+                'userId': 'me',
+                'id': this.id
+            }).then(function(resp) {
+                appendMessageRowPromotion(resp.result);
+            });
+        });
+    });
+    function appendMessageRowPromotion(message) { // add email in home page
+    appendHeaderToBody(message, '#promotion-table');
+    //console.log("append personal modal to html.body");
+    appendModalToBody(message);
+    $('#message-link-' + message.id).on('click', function() {
+        var ifrm = $('#message-iframe-' + message.id)[0].contentWindow.document;
+        $('body', ifrm).html(getBody(message.payload));
+        console.log("messges link clicked!")
+    });
+    $('#message-link-' + message.id).mouseenter(function() {
+        //$('#message-tr-'+message.id).addClass('bg-success');
+        if ($('#right-side-col').css('display') !== 'none') {
+            $('#right-side-col').empty();
+            $('#right-side-col').append(getBody(message.payload));
+        };
+    });
+}
+}
+
 
 function displayStevens(stevens_emailsPerPage, _callback) {
     // var t = $.Deferred();
@@ -458,6 +503,8 @@ function appendMessageRowPersonal(message) { // add email in home page
         };
     });
 }
+
+
 
 function appendMessageRowStevens(message, TODAY, mailID_DDL, out_of_date, target_tab_table, diff_box = "", flag = false) {
 
@@ -858,6 +905,14 @@ function handleAuthResult(authResult) {
             $('#stevens-button').addClass("sidebar-active");
             console.log("stevens-button click!")
         });
+        $('#promotion-button').on('click', function() {
+             $('#mailcontent .emails').addClass('hidden');
+            $('#promotion').removeClass('hidden');
+            $('.sidebar-nav a').removeClass("sidebar-active");
+            $('#promotion-button').addClass("sidebar-active");
+            console.log("promotion-button click!")
+        });
+        
         //toggle preview
         $('#right-side-toggle').on('click', function() {
             console.log($('#right-side-col').css('display'));
