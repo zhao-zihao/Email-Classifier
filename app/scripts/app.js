@@ -163,6 +163,8 @@ function loadEmails() {
     
     displayPromotion();
 
+    displayTrash();
+    
     listLabels();
     
 }
@@ -267,6 +269,7 @@ function displayPersonal() {
         });
     });
 }
+
 function displayPromotion() {
 
     var request = gapi.client.gmail.users.messages.list({
@@ -304,6 +307,42 @@ function displayPromotion() {
 }
 }
 
+function displayTrash() {
+
+    var request = gapi.client.gmail.users.messages.list({
+        'userId': 'me',
+        'labelIds': 'TRASH',
+        'maxResults': 20
+    });
+    
+    request.execute(function(response) {
+        $.each(response.messages, function() {
+            gapi.client.gmail.users.messages.get({
+                'userId': 'me',
+                'id': this.id
+            }).then(function(resp) {
+                appendMessageRowTrash(resp.result);
+            });
+        });
+    });
+    function appendMessageRowTrash(message) { // add email in home page
+    appendHeaderToBody(message, '#trash-table');
+    //console.log("append personal modal to html.body");
+    appendModalToBody(message);
+    $('#message-link-' + message.id).on('click', function() {
+        var ifrm = $('#message-iframe-' + message.id)[0].contentWindow.document;
+        $('body', ifrm).html(getBody(message.payload));
+        console.log("messges link clicked!")
+    });
+    $('#message-link-' + message.id).mouseenter(function() {
+        //$('#message-tr-'+message.id).addClass('bg-success');
+        if ($('#right-side-col').css('display') !== 'none') {
+            $('#right-side-col').empty();
+            $('#right-side-col').append(getBody(message.payload));
+        };
+    });
+}
+}
 
 function displayStevens(stevens_emailsPerPage, _callback) {
     // var t = $.Deferred();
@@ -851,7 +890,7 @@ function handleAuthResult(authResult) {
             handleSignOut();
         });
         //http://stackoverflow.com/questions/3239598/how-can-i-get-the-id-of-an-element-using-jquery
-        $('#trash-button').on('click', function() {
+        $('#trash-to-button').on('click', function() {
             var toBeDelete = [];
             $('input:checked').each(function() {
                 var thisid = $(this).attr('id');
@@ -883,7 +922,7 @@ function handleAuthResult(authResult) {
         });
         $('#inbox-button').addClass("sidebar-active");
         $('#inbox-button').on('click', function() {
-            $('#1.page-inbox-button').trigger('click');
+            $('.page-inbox-button#1').trigger('click');
             $('#mailcontent .emails').addClass('hidden');
             $('#inbox').removeClass('hidden');
             $('.sidebar-nav a').removeClass("sidebar-active");
@@ -912,7 +951,13 @@ function handleAuthResult(authResult) {
             $('#promotion-button').addClass("sidebar-active");
             console.log("promotion-button click!")
         });
-        
+        $('#trash-button').on('click', function() {
+             $('#mailcontent .emails').addClass('hidden');
+            $('#trash').removeClass('hidden');
+            $('.sidebar-nav a').removeClass("sidebar-active");
+            $('#trash-button').addClass("sidebar-active");
+            console.log("trash-button click!")
+        });
         //toggle preview
         $('#right-side-toggle').on('click', function() {
             console.log($('#right-side-col').css('display'));

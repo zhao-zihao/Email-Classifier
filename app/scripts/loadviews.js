@@ -6,8 +6,9 @@ $(document).ready(function(){
   $('#inbox').load('views/inbox.html');
   $('#personal').load('views/personal.html'); 
   $('#promotion').load('views/promotion.html'); 
+  $('#trash').load('views/trash.html');
   $('#stevens').load('views/stevens.html');
-
+  
   $('#querymodal').load('views/querymodal.html');
   $("#menu-toggle").click(function(e) {
         e.preventDefault();
