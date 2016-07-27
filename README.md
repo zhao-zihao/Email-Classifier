@@ -1,5 +1,6 @@
 # 2016SummerEmailClassifier
 > Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao
+> Deployed on the website: yangtiaoxiao.rocks
       
       first, you need to install npm and bower
       cd to root directory, "(sudo) bower install"
