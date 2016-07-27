@@ -1,5 +1,5 @@
 # 2016SummerEmailClassifier
-> Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao
+> Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao <br/>
 > Deployed on the website: yangtiaoxiao.rocks
       
       first, you need to install npm and bower
