@@ -76,7 +76,6 @@ function loadEmails() {
             };
             $('.page-item').removeClass('active');
             $('#' + num + '.page-inbox-button').parent().addClass('active');
-
         });
         $('#inbox-leftTenPages').on('click', function(){
             console.log('inbox-left-pagination button clicked');
@@ -201,9 +200,6 @@ function displayInbox(emailsPerPage, _callback) {
     var message_ids_read = [];
     var message_ids_delete = [];
     listMessages("me", "in:inbox", function(result) {
-        //console.log(resp);
-        //console.log("gapi.client.gmail.users.messages: ");
-        //console.log(gapi.client.gmail.users.messages);
         emailsPerPage.inbox_numOfPage = Math.ceil(result.length / emailsPerPage.inbox_numPerPage);
         var i = 0;
         console.log('result.length = ' + result.length);
@@ -214,7 +210,7 @@ function displayInbox(emailsPerPage, _callback) {
             }).then(function(resp) {
                 // promise reference: https://developers.google.com/api-client-library/javascript/features/promises#using-promises
                 //console.log(resp);
-                //console.log(resp.result);
+                // console.log(resp.result);
                 appendMessageRowInbox(resp.result, '#inbox-table', 'inbox-all');
                 message_ids.push(resp.result.id);
                 if (resp.result.labelIds.indexOf('UNREAD') === -1) {
@@ -495,10 +491,11 @@ function trashMessage(messageId) {
     request.execute(
         function(resp) {});
 }
-
+var iii = 0;
 function appendMessageRowInbox(message, target_tab_table, diff_box = "") { // add email in home page //????
     if (target_tab_table === undefined) target_tab_table = '#inbox-table';
-    appendHeaderToBody(message, target_tab_table, diff_box);
+    if (diff_box == "inbox-all") appendHeaderToBody(message, target_tab_table, diff_box, function (){iii++});
+    else appendHeaderToBody(message, target_tab_table, diff_box);
     //console.log("append header row in inbox html.body!");
     appendModalToBody(message);
     $('#message-link-' + message.id).on('click', function() {
@@ -747,16 +744,17 @@ function appendMessageRowQuery(message) {
         $('body', ifrm).html(getBody(message.payload));
     });
 }
-
+//var iii = 0;
 function appendHeaderToBody(message, target, diff_box = "", _callback) {
     if (target === undefined) target = '#inbox-table';
-
+    // console.log("appendHeaderToBody");
     var time = new Date(getHeader(message.payload.headers, 'Date'));
     var prettyTime = $.format.prettyDate(time);
     //pagination can only work on inbox-all and stevens-all
     var hide_or_not = '';
-    if(diff_box == 'inbox-all' || diff_box == 'stevens-all'){
+    if((iii > 9 && diff_box == 'inbox-all') || diff_box == 'stevens-all'){
         hide_or_not = 'hidden';
+        // console.log(iii);
     }
 
     if (prettyTime === "more than 5 weeks ago") {
