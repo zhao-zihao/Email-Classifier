@@ -1,5 +1,5 @@
-# 2016SummerEmailClassifier
-> Members: Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao, Zhao zihao <br/>
+# 2016 Stevens Email Classifier
+> Members:  Zhao ziha, Bu ruxue, Li bo, Xu xiaochen, Yang tianxiao <br/>
 > Deployed on the website: http://www.yangtianxiao.rocks/<br/>
 > report website: https://sites.google.com/site/emailclassifier2016/
       
